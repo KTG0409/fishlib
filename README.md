@@ -1,6 +1,6 @@
 # fishlib 🐟
 
-A Python library for parsing, standardizing, and comparing seafood product descriptions in foodservice.
+A Python library for parsing, standardizing, and comparing seafood product descriptions in the food industry.
 
 **The Problem:** Seafood product descriptions are messy. The same product can be described a hundred different ways. Comparing prices across distributors, suppliers, or market data requires deep domain knowledge to know if two items are actually comparable.
 
@@ -139,7 +139,7 @@ fishlib.find_matches(target_item, list_of_items, threshold=0.8)
 
 ## Why This Exists
 
-In foodservice distribution, comparing prices requires knowing if products are truly comparable. A "6oz salmon fillet" from two different sources might be:
+In food distribution, comparing prices requires knowing if products are truly comparable. A "6oz salmon fillet" from two different sources might be:
 
 - Center-cut bias portion at $12/lb (premium)
 - Block-cut with tail pieces at $8/lb (commodity)
