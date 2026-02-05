@@ -90,7 +90,7 @@ Foodservice primarily uses:
 Trim A, B, C are more common in retail.
 
 When comparing prices, Trim D vs Trim E represents a significant 
-price difference ($2+ per lb) due to skin removal labor.
+price difference due to skin removal labor.
 """
 
 
@@ -105,7 +105,7 @@ CUT_STYLES = {
         'excludes': ['tail pieces', 'nape pieces', 'collar area'],
         'premium': True,
         'labor_intensity': 'high',
-        'typical_price_impact': '+15-25% vs block cut',
+        'relative_price_impact': 'premium over block cut',
         'foodservice_use': 'Fine dining, consistent portion control'
     },
     'BIAS': {
@@ -114,7 +114,7 @@ CUT_STYLES = {
         'characteristics': ['Appears larger on plate', 'Better presentation', 'More surface area'],
         'premium': True,
         'labor_intensity': 'high',
-        'typical_price_impact': '+10-20% vs straight cut',
+        'relative_price_impact': 'premium over straight cut',
         'foodservice_use': 'Upscale casual, fine dining'
     },
     'BLOCK': {
@@ -124,7 +124,7 @@ CUT_STYLES = {
         'includes': ['tail pieces', 'nape pieces', 'variable shapes'],
         'premium': False,
         'labor_intensity': 'low',
-        'typical_price_impact': 'baseline',
+        'relative_price_impact': 'baseline',
         'foodservice_use': 'Casual dining, high volume'
     },
     'RANDOM': {
@@ -133,7 +133,7 @@ CUT_STYLES = {
         'characteristics': ['Variable shapes', 'May include trim pieces', 'Inconsistent'],
         'premium': False,
         'labor_intensity': 'minimal',
-        'typical_price_impact': '-20-30% vs block cut',
+        'relative_price_impact': 'discount vs block cut',
         'foodservice_use': 'Buffet, fish tacos, stir fry, soups'
     }
 }
@@ -307,29 +307,220 @@ PRICE_TIERS = {
     'ultra-premium': {
         'description': 'Highest price tier, specialty/luxury items',
         'examples': ['king salmon', 'bluefin tuna', 'king crab', 'stone crab', 'dover sole'],
-        'typical_markup': '40-60% above mid-tier'
+        'relative_position': 'significantly above mid-tier'
     },
     'premium': {
         'description': 'High quality, above-average pricing',
         'examples': ['sockeye salmon', 'halibut', 'sea bass', 'diver scallops', 'maine lobster'],
-        'typical_markup': '20-40% above mid-tier'
+        'relative_position': 'above mid-tier'
     },
     'mid': {
         'description': 'Standard foodservice quality',
         'examples': ['atlantic salmon', 'cod', 'mahi', 'snow crab', 'white shrimp'],
-        'typical_markup': 'baseline'
+        'relative_position': 'baseline'
     },
     'value': {
         'description': 'Cost-effective options',
         'examples': ['keta salmon', 'pollock', 'swai', 'calico scallops', 'jonah crab'],
-        'typical_markup': '15-30% below mid-tier'
+        'relative_position': 'below mid-tier'
     },
     'economy': {
         'description': 'Lowest cost tier',
         'examples': ['pink salmon', 'tilapia', 'imitation crab'],
-        'typical_markup': '30-50% below mid-tier'
+        'relative_position': 'significantly below mid-tier'
     }
 }
+
+
+# =============================================================================
+# MEAT GRADES (Crab, Lobster)
+# =============================================================================
+MEAT_GRADES = {
+    'JUMBO_LUMP': {
+        'name': 'Jumbo Lump',
+        'description': 'Largest pieces from the two large muscles connected to swimming legs',
+        'characteristics': ['Largest pieces', 'Most visually impressive', 'Minimal shell fragments'],
+        'premium': True,
+        'typical_use': 'Crab cakes, elegant presentations, garnish',
+        'relative_price': 'highest'
+    },
+    'LUMP': {
+        'name': 'Lump',
+        'description': 'Broken pieces of jumbo lump and large flakes from body',
+        'characteristics': ['Large pieces', 'Good texture', 'Some shell possible'],
+        'premium': True,
+        'typical_use': 'Crab cakes, salads, stuffings',
+        'relative_price': 'high'
+    },
+    'BACKFIN': {
+        'name': 'Backfin',
+        'description': 'Smaller pieces of lump mixed with body meat flakes',
+        'characteristics': ['Mixed sizes', 'Good flavor', 'More shell fragments'],
+        'premium': False,
+        'typical_use': 'Crab cakes, dips, casseroles',
+        'relative_price': 'mid'
+    },
+    'SPECIAL': {
+        'name': 'Special/Flake',
+        'description': 'Small flakes of white body meat',
+        'characteristics': ['Small pieces', 'Good for mixing', 'Most shell fragments'],
+        'premium': False,
+        'typical_use': 'Soups, dips, crab imperial, stuffings',
+        'relative_price': 'value'
+    },
+    'CLAW': {
+        'name': 'Claw Meat',
+        'description': 'Meat from the claws, darker color, stronger flavor',
+        'characteristics': ['Brownish color', 'Stronger flavor', 'Firmer texture'],
+        'premium': False,
+        'typical_use': 'Soups, dips, crab cakes where color not critical',
+        'relative_price': 'value'
+    },
+    'COCKTAIL_CLAW': {
+        'name': 'Cocktail Claw',
+        'description': 'Whole claw with shell scored for easy eating',
+        'characteristics': ['Shell partially attached', 'Ready to serve', 'Presentation item'],
+        'premium': True,
+        'typical_use': 'Appetizers, cocktail service, buffets',
+        'relative_price': 'mid-high'
+    }
+}
+
+MEAT_GRADE_KEY_INSIGHT = """
+CRAB MEAT GRADE = HUGE PRICE DRIVER
+
+Jumbo lump can be 3-4x the price of claw meat for the same species.
+When comparing crab prices, meat grade is as important as species.
+
+Grade hierarchy (highest to lowest value):
+1. Jumbo Lump - premium presentations
+2. Lump - crab cakes, salads
+3. Backfin - mixed applications
+4. Special/Flake - soups, dips
+5. Claw - strongest flavor, lowest price
+
+A "crab meat" comparison without grade is meaningless.
+"""
+
+
+# =============================================================================
+# PREPARATION (Raw vs Cooked vs Smoked)
+# =============================================================================
+PREPARATION = {
+    'RAW': {
+        'name': 'Raw',
+        'description': 'Uncooked product, requires cooking before consumption',
+        'characteristics': ['Needs cooking', 'Longer shelf life frozen', 'Full cooking flexibility'],
+        'typical_species': ['shrimp', 'salmon', 'cod', 'lobster tails'],
+        'relative_price': 'baseline'
+    },
+    'COOKED': {
+        'name': 'Cooked',
+        'description': 'Fully cooked, ready to eat or heat-and-serve',
+        'characteristics': ['Ready to eat', 'Shorter shelf life', 'Less cooking flexibility'],
+        'typical_species': ['shrimp', 'crab', 'lobster', 'crawfish'],
+        'relative_price': 'premium over raw'
+    },
+    'SMOKED': {
+        'name': 'Smoked',
+        'description': 'Cured and smoked, distinctive flavor profile',
+        'characteristics': ['Distinctive flavor', 'Extended shelf life', 'Ready to eat'],
+        'variants': ['cold smoked', 'hot smoked', 'kippered'],
+        'typical_species': ['salmon', 'trout', 'whitefish', 'mackerel'],
+        'relative_price': 'premium'
+    },
+    'CURED': {
+        'name': 'Cured',
+        'description': 'Salt/sugar cured without smoking',
+        'characteristics': ['Silky texture', 'No smoke flavor', 'Ready to eat'],
+        'variants': ['gravlax', 'lox', 'nova'],
+        'typical_species': ['salmon'],
+        'relative_price': 'premium'
+    }
+}
+
+PREPARATION_KEY_INSIGHT = """
+RAW vs COOKED = DIFFERENT PRODUCTS
+
+Cooked shrimp costs more than raw due to:
+1. Labor (cooking, handling)
+2. Yield loss (shrinkage during cooking)
+3. Additional processing/QC
+
+When comparing shrimp prices, ALWAYS check preparation.
+"16/20 P&D" raw vs cooked can differ by 20-30%.
+
+Smoked/cured products are specialty items with very different
+pricing than their raw counterparts.
+"""
+
+
+# =============================================================================
+# VALUE-ADDED PROCESSING
+# =============================================================================
+VALUE_ADDED = {
+    'BREADED': {
+        'name': 'Breaded/Battered',
+        'description': 'Coated with breading or batter for frying',
+        'characteristics': ['Ready to fry', 'Standardized portions', 'Extended shelf life'],
+        'variants': ['breaded', 'panko crusted', 'beer battered', 'tempura'],
+        'typical_species': ['shrimp', 'cod', 'catfish', 'calamari'],
+        'relative_price': 'varies - can be premium or value depending on product'
+    },
+    'STUFFED': {
+        'name': 'Stuffed',
+        'description': 'Filled with stuffing (often crab or seafood blend)',
+        'characteristics': ['Premium presentation', 'Labor intensive', 'Complete entree'],
+        'typical_products': ['stuffed shrimp', 'stuffed flounder', 'stuffed lobster tail'],
+        'relative_price': 'premium'
+    },
+    'MARINATED': {
+        'name': 'Marinated/Seasoned',
+        'description': 'Pre-seasoned or marinated for flavor',
+        'characteristics': ['Flavor-enhanced', 'Ready to cook', 'Reduced prep time'],
+        'variants': ['teriyaki', 'garlic butter', 'cajun', 'herb', 'citrus'],
+        'typical_species': ['salmon', 'shrimp', 'mahi'],
+        'relative_price': 'slight premium'
+    },
+    'GLAZED': {
+        'name': 'Glazed',
+        'description': 'Coated with glaze (often Asian-inspired)',
+        'characteristics': ['Sweet/savory coating', 'Ready to cook', 'Caramelizes when cooked'],
+        'variants': ['miso glazed', 'teriyaki glazed', 'honey glazed'],
+        'typical_species': ['salmon', 'cod', 'sea bass'],
+        'relative_price': 'premium'
+    },
+    'BLACKENED': {
+        'name': 'Blackened',
+        'description': 'Coated with Cajun/blackening spice blend',
+        'characteristics': ['Spiced coating', 'Cajun style', 'Ready to sear'],
+        'typical_species': ['catfish', 'mahi', 'redfish', 'salmon'],
+        'relative_price': 'slight premium'
+    },
+    'FORMED': {
+        'name': 'Formed/Shaped',
+        'description': 'Ground or minced seafood shaped into patties or cakes',
+        'characteristics': ['Portion controlled', 'Uses trim/lesser pieces', 'Consistent shape'],
+        'variants': ['crab cakes', 'salmon burgers', 'fish cakes', 'shrimp patties'],
+        'typical_species': ['crab', 'salmon', 'cod', 'shrimp'],
+        'relative_price': 'varies widely'
+    }
+}
+
+VALUE_ADDED_KEY_INSIGHT = """
+VALUE-ADDED = COMPLETELY DIFFERENT PRODUCT CLASS
+
+Breaded cod portion vs plain cod portion are not comparable.
+Value-added products include labor, ingredients, and R&D costs.
+
+When analyzing PMI or market data:
+- Separate value-added from plain/raw items
+- Don't mix breaded with unbreaded
+- Stuffed/marinated are specialty, not commodity
+
+A "salmon portion" in Circana could be plain OR teriyaki-glazed.
+Without identifying value-added processing, comparisons are invalid.
+"""
 
 
 # =============================================================================
