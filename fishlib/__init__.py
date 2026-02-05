@@ -49,6 +49,9 @@ from .standards import (
     standardize_harvest,
     standardize_origin,
     standardize_size,
+    standardize_meat_grade,
+    standardize_preparation,
+    standardize_value_added,
     get_standard_code,
     list_codes
 )
@@ -78,6 +81,9 @@ __all__ = [
     'standardize_harvest',
     'standardize_origin',
     'standardize_size',
+    'standardize_meat_grade',
+    'standardize_preparation',
+    'standardize_value_added',
     'get_standard_code',
     'list_codes',
     
