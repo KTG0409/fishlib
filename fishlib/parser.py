@@ -83,7 +83,10 @@ def parse(description: str) -> Dict[str, Any]:
         'origin': None,
         'cut_style': None,
         'brand': None,
-        'count': None
+        'count': None,
+        'meat_grade': None,
+        'preparation': None,
+        'value_added': None
     }
     
     # Normalize text
@@ -130,6 +133,15 @@ def parse(description: str) -> Dict[str, Any]:
     # Extract brand (common brands)
     result['brand'] = _extract_brand(text)
     
+    # Extract meat grade (crab, lobster)
+    result['meat_grade'] = _extract_attribute(text, 'meat_grade')
+    
+    # Extract preparation (raw, cooked, smoked, cured)
+    result['preparation'] = _extract_attribute(text, 'preparation')
+    
+    # Extract value-added (breaded, stuffed, marinated, etc.)
+    result['value_added'] = _extract_attribute(text, 'value_added')
+    
     return result
 
 
@@ -144,44 +156,80 @@ def _extract_species(text: str) -> Optional[Dict[str, Any]]:
     """
     Extract species information from text.
     
+    Uses a priority system to avoid alias collisions:
+      1. Category name in text + subspecies alias match (strongest)
+      2. Category name in text, no subspecies match (category-level)
+      3. Subspecies alias only, no category name (fallback for e.g., 'SABLEFISH')
+    
+    Within each priority level, longer alias matches win to prevent
+    short aliases like 'ATL' from shadowing 'ATLANTIC'.
+    
     Returns dict with species, species_code, category, subspecies.
     """
     text_upper = text.upper()
     
-    # Check each category
+    # --- Priority 1: Category name present + subspecies alias ---
+    # Collect ALL matches where the category name is in the text,
+    # then pick the one with the longest alias match.
+    category_plus_alias_matches = []
+    category_only_matches = []
+    
     for category, cat_data in SPECIES_DATA.items():
-        # Check if category name is in text
-        if category.upper() in text_upper:
-            # Try to find specific subspecies
-            for subspec, spec_info in cat_data.get('species', {}).items():
-                for alias in spec_info.get('aliases', []):
-                    if alias in text_upper:
-                        return {
-                            'species': spec_info['name'],
-                            'species_code': f"{category.upper()}|{subspec.upper()}",
-                            'category': category,
-                            'subspecies': subspec
-                        }
-            
-            # No specific subspecies found, return category only
-            return {
+        if category.upper() not in text_upper:
+            continue
+        
+        found_subspecies = False
+        for subspec, spec_info in cat_data.get('species', {}).items():
+            for alias in spec_info.get('aliases', []):
+                if alias in text_upper:
+                    category_plus_alias_matches.append({
+                        'species': spec_info['name'],
+                        'species_code': f"{category.upper()}|{subspec.upper()}",
+                        'category': category,
+                        'subspecies': subspec,
+                        '_alias_len': len(alias)
+                    })
+                    found_subspecies = True
+        
+        if not found_subspecies:
+            category_only_matches.append({
                 'species': category.title(),
                 'species_code': category.upper(),
                 'category': category,
                 'subspecies': None
-            }
+            })
     
-    # Check for species without category match (e.g., "ATL" for Atlantic Salmon)
+    # If we got category+alias matches, return the longest alias match
+    if category_plus_alias_matches:
+        best = max(category_plus_alias_matches, key=lambda m: m['_alias_len'])
+        del best['_alias_len']
+        return best
+    
+    # --- Priority 2: Category name present, no subspecies alias ---
+    if category_only_matches:
+        return category_only_matches[0]
+    
+    # --- Priority 3: Alias only, no category name in text ---
+    # e.g., "SABLEFISH FIL" has no "COD" in text but SABLEFISH is a cod alias.
+    # Collect all, pick the longest alias to minimize false positives.
+    alias_only_matches = []
+    
     for category, cat_data in SPECIES_DATA.items():
         for subspec, spec_info in cat_data.get('species', {}).items():
             for alias in spec_info.get('aliases', []):
-                if alias in text_upper and len(alias) >= 3:  # Avoid short false matches
-                    return {
+                if len(alias) >= 3 and alias in text_upper:
+                    alias_only_matches.append({
                         'species': spec_info['name'],
                         'species_code': f"{category.upper()}|{subspec.upper()}",
                         'category': category,
-                        'subspecies': subspec
-                    }
+                        'subspecies': subspec,
+                        '_alias_len': len(alias)
+                    })
+    
+    if alias_only_matches:
+        best = max(alias_only_matches, key=lambda m: m['_alias_len'])
+        del best['_alias_len']
+        return best
     
     return None
 
@@ -333,5 +381,8 @@ def extract_key_attributes(description: str) -> Dict[str, str]:
         'skin': result.get('skin'),
         'bone': result.get('bone'),
         'size': result.get('size'),
-        'trim': result.get('trim')
+        'trim': result.get('trim'),
+        'meat_grade': result.get('meat_grade'),
+        'preparation': result.get('preparation'),
+        'value_added': result.get('value_added')
     }
