@@ -566,6 +566,297 @@
                 "RUS",
                 "RUSSIAN"
             ]
+        },
+        "FRO": {
+            "name": "Faroe Islands",
+            "aliases": [
+                "FAROE",
+                "FAROE ISLANDS",
+                "FAROES",
+                "FRO",
+                "FAROESE"
+            ]
+        },
+        "BGD": {
+            "name": "Bangladesh",
+            "aliases": [
+                "BANGLADESH",
+                "BGD",
+                "BANGLADESHI"
+            ]
+        },
+        "MMR": {
+            "name": "Myanmar",
+            "aliases": [
+                "MYANMAR",
+                "MMR",
+                "BURMA"
+            ]
+        },
+        "PHL": {
+            "name": "Philippines",
+            "aliases": [
+                "PHILIPPINES",
+                "PHL",
+                "FILIPINO",
+                "PHILIPPINE"
+            ]
+        },
+        "PER": {
+            "name": "Peru",
+            "aliases": [
+                "PERU",
+                "PER",
+                "PERUVIAN"
+            ]
+        },
+        "ARG": {
+            "name": "Argentina",
+            "aliases": [
+                "ARGENTINA",
+                "ARG",
+                "ARGENTINE"
+            ]
+        },
+        "GBR": {
+            "name": "United Kingdom",
+            "aliases": [
+                "UK",
+                "UNITED KINGDOM",
+                "GBR",
+                "BRITISH",
+                "ENGLAND"
+            ]
+        },
+        "JPN": {
+            "name": "Japan",
+            "aliases": [
+                "JAPAN",
+                "JPN",
+                "JAPANESE"
+            ]
+        },
+        "KOR": {
+            "name": "South Korea",
+            "aliases": [
+                "KOREA",
+                "SOUTH KOREA",
+                "KOR",
+                "KOREAN"
+            ]
+        },
+        "TWN": {
+            "name": "Taiwan",
+            "aliases": [
+                "TAIWAN",
+                "TWN",
+                "TAIWANESE"
+            ]
+        },
+        "ESP": {
+            "name": "Spain",
+            "aliases": [
+                "SPAIN",
+                "ESP",
+                "SPANISH"
+            ]
+        },
+        "PRT": {
+            "name": "Portugal",
+            "aliases": [
+                "PORTUGAL",
+                "PRT",
+                "PORTUGUESE"
+            ]
+        },
+        "GRC": {
+            "name": "Greece",
+            "aliases": [
+                "GREECE",
+                "GRC",
+                "GREEK"
+            ]
+        },
+        "TUR": {
+            "name": "Turkey",
+            "aliases": [
+                "TURKEY",
+                "TUR",
+                "TURKISH"
+            ]
+        },
+        "HON": {
+            "name": "Honduras",
+            "aliases": [
+                "HONDURAS",
+                "HON",
+                "HONDURAN"
+            ]
+        }
+    },
+    "meat_grade": {
+        "JUMBO_LUMP": {
+            "name": "Jumbo Lump",
+            "aliases": [
+                "JUMBO LUMP",
+                "JMBO LUMP",
+                "JL",
+                "JUMBO"
+            ]
+        },
+        "LUMP": {
+            "name": "Lump",
+            "aliases": [
+                "LUMP",
+                "BACKFIN LUMP"
+            ]
+        },
+        "BACKFIN": {
+            "name": "Backfin",
+            "aliases": [
+                "BACKFIN",
+                "BKFN"
+            ]
+        },
+        "SPECIAL": {
+            "name": "Special",
+            "aliases": [
+                "SPECIAL",
+                "SPCL",
+                "FLAKE"
+            ]
+        },
+        "CLAW": {
+            "name": "Claw Meat",
+            "aliases": [
+                "CLAW MEAT",
+                "CLW MEAT",
+                "CLAW"
+            ]
+        },
+        "COCKTAIL_CLAW": {
+            "name": "Cocktail Claw",
+            "aliases": [
+                "COCKTAIL CLAW",
+                "CKTL CLAW",
+                "SCORED CLAW"
+            ]
+        }
+    },
+    "preparation": {
+        "RAW": {
+            "name": "Raw",
+            "aliases": [
+                "RAW",
+                "UNCOOKED"
+            ]
+        },
+        "COOKED": {
+            "name": "Cooked",
+            "aliases": [
+                "COOKED",
+                "CKD",
+                "PRECOOKED",
+                "PRE-COOKED",
+                "FULLY COOKED"
+            ]
+        },
+        "SMOKED": {
+            "name": "Smoked",
+            "aliases": [
+                "SMOKED",
+                "SMK",
+                "COLD SMOKED",
+                "HOT SMOKED",
+                "KIPPERED"
+            ]
+        },
+        "CURED": {
+            "name": "Cured",
+            "aliases": [
+                "CURED",
+                "GRAVLAX",
+                "LOX",
+                "NOVA"
+            ]
+        }
+    },
+    "value_added": {
+        "BREADED": {
+            "name": "Breaded",
+            "aliases": [
+                "BREADED",
+                "BREAD",
+                "BRD",
+                "PANKO",
+                "CRUSTED",
+                "ENCRUSTED",
+                "BEER BATTERED",
+                "BATTERED",
+                "TEMPURA"
+            ]
+        },
+        "STUFFED": {
+            "name": "Stuffed",
+            "aliases": [
+                "STUFFED",
+                "STFD",
+                "STUFF"
+            ]
+        },
+        "MARINATED": {
+            "name": "Marinated",
+            "aliases": [
+                "MARINATED",
+                "MARIN",
+                "TERIYAKI",
+                "BOURBON",
+                "MAPLE",
+                "CITRUS",
+                "HERB",
+                "GARLIC BUTTER",
+                "SEASONED"
+            ]
+        },
+        "GLAZED": {
+            "name": "Glazed",
+            "aliases": [
+                "GLAZED",
+                "GLAZE",
+                "MISO GLAZED",
+                "HONEY GLAZED",
+                "SOY GLAZED"
+            ]
+        },
+        "BLACKENED": {
+            "name": "Blackened",
+            "aliases": [
+                "BLACKENED",
+                "BLKND",
+                "CAJUN"
+            ]
+        },
+        "GRILLED": {
+            "name": "Grilled",
+            "aliases": [
+                "GRILLED",
+                "GRLL",
+                "CHAR GRILLED",
+                "FLAME GRILLED"
+            ]
+        },
+        "FORMED": {
+            "name": "Formed/Shaped",
+            "aliases": [
+                "FORMED",
+                "SHAPED",
+                "CAKE",
+                "CAKES",
+                "BURGER",
+                "BURGERS",
+                "PATTY",
+                "PATTIES"
+            ]
         }
     }
 }
