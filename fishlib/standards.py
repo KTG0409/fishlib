@@ -258,6 +258,62 @@ def standardize_size(text: str) -> Optional[str]:
     return None
 
 
+def standardize_meat_grade(text: str) -> Optional[str]:
+    """
+    Standardize crab/lobster meat grade.
+    
+    Examples:
+        'JUMBO LUMP' -> 'JUMBO_LUMP'
+        'CLAW MEAT' -> 'CLAW'
+        'BACKFIN' -> 'BACKFIN'
+    
+    Args:
+        text: The meat grade to standardize
+        
+    Returns:
+        Standard meat grade code or None if not recognized
+    """
+    return _find_match(text, 'meat_grade')
+
+
+def standardize_preparation(text: str) -> Optional[str]:
+    """
+    Standardize preparation type.
+    
+    Examples:
+        'COOKED' -> 'COOKED'
+        'RAW' -> 'RAW'
+        'SMOKED' -> 'SMOKED'
+        'LOX' -> 'CURED'
+    
+    Args:
+        text: The preparation type to standardize
+        
+    Returns:
+        Standard preparation code or None if not recognized
+    """
+    return _find_match(text, 'preparation')
+
+
+def standardize_value_added(text: str) -> Optional[str]:
+    """
+    Standardize value-added processing type.
+    
+    Examples:
+        'BREADED' -> 'BREADED'
+        'PANKO' -> 'BREADED'
+        'STUFFED' -> 'STUFFED'
+        'TERIYAKI' -> 'MARINATED'
+    
+    Args:
+        text: The value-added type to standardize
+        
+    Returns:
+        Standard value-added code or None if not recognized
+    """
+    return _find_match(text, 'value_added')
+
+
 def get_standard_code(attribute: str, value: str) -> Optional[str]:
     """
     Get the standard code for any attribute value.
@@ -283,6 +339,9 @@ def get_standard_code(attribute: str, value: str) -> Optional[str]:
         'harvest': standardize_harvest,
         'origin': standardize_origin,
         'size': standardize_size,
+        'meat_grade': standardize_meat_grade,
+        'preparation': standardize_preparation,
+        'value_added': standardize_value_added,
     }
     
     func = standardizers.get(attribute.lower())
