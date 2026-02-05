@@ -65,6 +65,18 @@ def comparison_key(item: Any) -> str:
     if item.get('count'):
         components.append(item['count'])
     
+    # Meat grade (for crab/lobster)
+    if item.get('meat_grade'):
+        components.append(item['meat_grade'])
+    
+    # Preparation (raw, cooked, smoked, cured)
+    if item.get('preparation'):
+        components.append(item['preparation'])
+    
+    # Value-added (breaded, stuffed, etc.)
+    if item.get('value_added'):
+        components.append(item['value_added'])
+    
     return '|'.join(components)
 
 
@@ -108,7 +120,7 @@ def match(item1: Any, item2: Any) -> Dict[str, Any]:
     key2 = comparison_key(item2)
     
     # Compare attributes
-    COMPARE_ATTRS = ['category', 'subspecies', 'form', 'skin', 'bone', 'trim', 'size', 'count', 'harvest', 'cut_style']
+    COMPARE_ATTRS = ['category', 'subspecies', 'form', 'skin', 'bone', 'trim', 'size', 'count', 'harvest', 'cut_style', 'meat_grade', 'preparation', 'value_added']
     
     matching = []
     different = []
@@ -255,6 +267,9 @@ def calculate_confidence(matching: List[str], different: List[str], missing: Lis
         'count': 2.0,         # Important for shrimp/scallops
         'harvest': 1.5,       # Wild vs farm matters
         'cut_style': 1.5,     # Center cut vs block matters
+        'meat_grade': 2.5,    # Critical for crab - jumbo lump vs claw is huge
+        'preparation': 2.0,   # Raw vs cooked is a major price differentiator
+        'value_added': 2.0,   # Breaded vs plain is a different product entirely
     }
     
     score = 0
