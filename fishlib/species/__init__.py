@@ -39,8 +39,6 @@ def get_species_info(category: str, subspecies: str = None) -> Optional[Dict[str
         >>> info = get_species_info('salmon', 'atlantic')
         >>> print(info['price_tier'])
         'mid'
-        >>> print(info['typical_price_range'])
-        [8.00, 11.00]
     """
     category = category.lower()
     
@@ -116,27 +114,6 @@ def get_price_tier(category: str, subspecies: str = None) -> Optional[str]:
     info = get_species_info(category, subspecies)
     if info:
         return info.get('price_tier')
-    return None
-
-
-def get_price_range(category: str, subspecies: str = None) -> Optional[tuple]:
-    """
-    Get typical price range for a species.
-    
-    Args:
-        category: Main category
-        subspecies: Specific type
-        
-    Returns:
-        Tuple of (low, high) prices in $/lb, or None if not available
-        
-    Example:
-        >>> get_price_range('salmon', 'king')
-        (14.00, 18.00)
-    """
-    info = get_species_info(category, subspecies)
-    if info and 'typical_price_range' in info:
-        return tuple(info['typical_price_range'])
     return None
 
 
