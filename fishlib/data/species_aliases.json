@@ -4,123 +4,255 @@
         "species": {
             "atlantic": {
                 "name": "Atlantic Salmon",
-                "aliases": ["ATLANTIC", "ATL", "SALMO SALAR", "FARMED SALMON"],
+                "aliases": [
+                    "ATLANTIC",
+                    "ATL",
+                    "SALMO SALAR",
+                    "FARMED SALMON"
+                ],
                 "harvest": "farm",
-                "price_tier": "mid",
-                "typical_price_range": [8.00, 11.00]
+                "price_tier": "mid"
             },
             "king": {
                 "name": "King Salmon (Chinook)",
-                "aliases": ["KING", "CHINOOK", "SPRING", "TYEE", "BLACKMOUTH", "ONCORHYNCHUS TSHAWYTSCHA"],
+                "aliases": [
+                    "KING",
+                    "CHINOOK",
+                    "SPRING",
+                    "TYEE",
+                    "BLACKMOUTH",
+                    "ONCORHYNCHUS TSHAWYTSCHA"
+                ],
                 "harvest": "wild",
-                "price_tier": "ultra-premium",
-                "typical_price_range": [14.00, 18.00]
+                "price_tier": "ultra-premium"
             },
             "sockeye": {
                 "name": "Sockeye Salmon",
-                "aliases": ["SOCKEYE", "RED", "BLUEBACK", "KOKANEE", "ONCORHYNCHUS NERKA"],
+                "aliases": [
+                    "SOCKEYE",
+                    "RED",
+                    "BLUEBACK",
+                    "KOKANEE",
+                    "ONCORHYNCHUS NERKA"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [10.00, 13.00]
+                "price_tier": "premium"
             },
             "coho": {
                 "name": "Coho Salmon",
-                "aliases": ["COHO", "SILVER", "SILVERSIDES", "ONCORHYNCHUS KISUTCH"],
+                "aliases": [
+                    "COHO",
+                    "SILVER",
+                    "SILVERSIDES",
+                    "ONCORHYNCHUS KISUTCH"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [9.00, 12.00]
+                "price_tier": "premium"
             },
             "keta": {
                 "name": "Keta Salmon (Chum)",
-                "aliases": ["KETA", "CHUM", "DOG", "SILVERBRITE", "ONCORHYNCHUS KETA"],
+                "aliases": [
+                    "KETA",
+                    "CHUM",
+                    "DOG",
+                    "SILVERBRITE",
+                    "ONCORHYNCHUS KETA"
+                ],
                 "harvest": "wild",
-                "price_tier": "value",
-                "typical_price_range": [7.00, 10.00]
+                "price_tier": "value"
             },
             "pink": {
                 "name": "Pink Salmon",
-                "aliases": ["PINK", "HUMPBACK", "HUMPY", "ONCORHYNCHUS GORBUSCHA"],
+                "aliases": [
+                    "PINK",
+                    "HUMPBACK",
+                    "HUMPY",
+                    "ONCORHYNCHUS GORBUSCHA"
+                ],
                 "harvest": "wild",
-                "price_tier": "economy",
-                "typical_price_range": [5.00, 8.00]
+                "price_tier": "economy"
             }
         },
         "trim_levels": {
-            "A": {"description": "Backbone off, bellybone off", "skin": "on", "foodservice": false},
-            "B": {"description": "A + backfin off, collarbone off, belly fat off, belly fins off", "skin": "on", "foodservice": false},
-            "C": {"description": "B + pin bone out", "skin": "on", "foodservice": false},
-            "D": {"description": "C + back trimmed, tailpiece off, belly membrane off, nape trimmed", "skin": "on", "foodservice": true},
-            "E": {"description": "D + skin off", "skin": "off", "foodservice": true}
+            "A": {
+                "description": "Backbone off, bellybone off",
+                "skin": "on",
+                "foodservice": false
+            },
+            "B": {
+                "description": "A + backfin off, collarbone off, belly fat off, belly fins off",
+                "skin": "on",
+                "foodservice": false
+            },
+            "C": {
+                "description": "B + pin bone out",
+                "skin": "on",
+                "foodservice": false
+            },
+            "D": {
+                "description": "C + back trimmed, tailpiece off, belly membrane off, nape trimmed",
+                "skin": "on",
+                "foodservice": true
+            },
+            "E": {
+                "description": "D + skin off",
+                "skin": "off",
+                "foodservice": true
+            }
         },
-        "forms": ["FIL", "PRTN", "LOIN", "WHL", "STEAK", "CHUNK", "H&G"]
+        "forms": [
+            "FIL",
+            "PRTN",
+            "LOIN",
+            "WHL",
+            "STEAK",
+            "CHUNK",
+            "H&G"
+        ]
     },
     "crab": {
         "category": "Crustacean",
         "species": {
             "king": {
                 "name": "King Crab",
-                "aliases": ["KING", "ALASKA KING", "RED KING", "GOLDEN KING", "BLUE KING"],
+                "aliases": [
+                    "KING",
+                    "ALASKA KING",
+                    "RED KING",
+                    "GOLDEN KING",
+                    "BLUE KING"
+                ],
                 "harvest": "wild",
-                "price_tier": "ultra-premium",
-                "typical_price_range": [25.00, 45.00]
+                "price_tier": "ultra-premium"
             },
             "snow": {
                 "name": "Snow Crab",
-                "aliases": ["SNOW", "OPILIO", "QUEEN", "TANNER"],
+                "aliases": [
+                    "SNOW",
+                    "OPILIO",
+                    "QUEEN",
+                    "TANNER"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [12.00, 20.00]
+                "price_tier": "premium"
             },
             "dungeness": {
                 "name": "Dungeness Crab",
-                "aliases": ["DUNGENESS", "DUNGE", "PACIFIC", "METACARCINUS MAGISTER"],
+                "aliases": [
+                    "DUNGENESS",
+                    "DUNGE",
+                    "PACIFIC",
+                    "METACARCINUS MAGISTER"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [10.00, 18.00]
+                "price_tier": "premium"
             },
             "blue": {
                 "name": "Blue Crab",
-                "aliases": ["BLUE", "ATLANTIC BLUE", "CHESAPEAKE", "CALLINECTES SAPIDUS"],
+                "aliases": [
+                    "BLUE",
+                    "ATLANTIC BLUE",
+                    "CHESAPEAKE",
+                    "CALLINECTES SAPIDUS"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [15.00, 30.00]
+                "price_tier": "premium"
             },
             "stone": {
                 "name": "Stone Crab",
-                "aliases": ["STONE", "FLORIDA STONE", "MENIPPE MERCENARIA"],
+                "aliases": [
+                    "STONE",
+                    "FLORIDA STONE",
+                    "MENIPPE MERCENARIA"
+                ],
                 "harvest": "wild",
-                "price_tier": "ultra-premium",
-                "typical_price_range": [25.00, 40.00]
+                "price_tier": "ultra-premium"
             },
             "jonah": {
                 "name": "Jonah Crab",
-                "aliases": ["JONAH", "ATLANTIC JONAH", "CANCER BOREALIS"],
+                "aliases": [
+                    "JONAH",
+                    "ATLANTIC JONAH",
+                    "CANCER BOREALIS"
+                ],
                 "harvest": "wild",
-                "price_tier": "value",
-                "typical_price_range": [6.00, 12.00]
+                "price_tier": "value"
             },
             "soft_shell": {
                 "name": "Soft Shell Crab",
-                "aliases": ["SOFT SHELL", "SOFT", "SOFTIES", "SOFTSHELL"],
+                "aliases": [
+                    "SOFT SHELL",
+                    "SOFT",
+                    "SOFTIES",
+                    "SOFTSHELL"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [8.00, 15.00]
+                "price_tier": "premium"
             },
             "imitation": {
                 "name": "Imitation Crab (Surimi)",
-                "aliases": ["IMITATION", "IMIT", "SURIMI", "KRAB", "CRAB STICK"],
+                "aliases": [
+                    "IMITATION",
+                    "IMIT",
+                    "SURIMI",
+                    "KRAB",
+                    "CRAB STICK"
+                ],
                 "harvest": "processed",
-                "price_tier": "economy",
-                "typical_price_range": [3.00, 6.00]
+                "price_tier": "economy"
             }
         },
-        "forms": ["CLUSTER", "LEG", "CLAW", "MEAT", "WHL"],
+        "forms": [
+            "CLUSTER",
+            "LEG",
+            "CLAW",
+            "MEAT",
+            "WHL"
+        ],
         "meat_grades": {
-            "jumbo_lump": {"name": "Jumbo Lump", "aliases": ["JUMBO LUMP", "JMBO LUMP", "JL"], "premium": true},
-            "lump": {"name": "Lump", "aliases": ["LUMP", "BACKFIN LUMP"], "premium": true},
-            "backfin": {"name": "Backfin", "aliases": ["BACKFIN", "BKFN"], "premium": false},
-            "special": {"name": "Special", "aliases": ["SPECIAL", "SPCL", "FLAKE"], "premium": false},
-            "claw": {"name": "Claw Meat", "aliases": ["CLAW", "CLAW MEAT", "CLW"], "premium": false}
+            "jumbo_lump": {
+                "name": "Jumbo Lump",
+                "aliases": [
+                    "JUMBO LUMP",
+                    "JMBO LUMP",
+                    "JL"
+                ],
+                "premium": true
+            },
+            "lump": {
+                "name": "Lump",
+                "aliases": [
+                    "LUMP",
+                    "BACKFIN LUMP"
+                ],
+                "premium": true
+            },
+            "backfin": {
+                "name": "Backfin",
+                "aliases": [
+                    "BACKFIN",
+                    "BKFN"
+                ],
+                "premium": false
+            },
+            "special": {
+                "name": "Special",
+                "aliases": [
+                    "SPECIAL",
+                    "SPCL",
+                    "FLAKE"
+                ],
+                "premium": false
+            },
+            "claw": {
+                "name": "Claw Meat",
+                "aliases": [
+                    "CLAW",
+                    "CLAW MEAT",
+                    "CLW"
+                ],
+                "premium": false
+            }
         }
     },
     "lobster": {
@@ -128,30 +260,65 @@
         "species": {
             "maine": {
                 "name": "Maine Lobster",
-                "aliases": ["MAINE", "AMERICAN", "ATLANTIC", "HOMARUS AMERICANUS", "COLD WATER"],
+                "aliases": [
+                    "MAINE",
+                    "AMERICAN",
+                    "ATLANTIC",
+                    "HOMARUS AMERICANUS",
+                    "COLD WATER"
+                ],
                 "harvest": "wild",
-                "price_tier": "ultra-premium",
-                "typical_price_range": [15.00, 30.00]
+                "price_tier": "ultra-premium"
             },
             "canadian": {
                 "name": "Canadian Lobster",
-                "aliases": ["CANADIAN", "CANADA", "CDN", "NOVA SCOTIA"],
+                "aliases": [
+                    "CANADIAN",
+                    "CANADA",
+                    "CDN",
+                    "NOVA SCOTIA"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [12.00, 25.00]
+                "price_tier": "premium"
             },
             "warm_water": {
                 "name": "Warm Water Lobster",
-                "aliases": ["WARM WATER", "CARIBBEAN", "SPINY", "ROCK", "FLORIDA"],
+                "aliases": [
+                    "WARM WATER",
+                    "CARIBBEAN",
+                    "SPINY",
+                    "ROCK",
+                    "FLORIDA"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [8.00, 15.00]
+                "price_tier": "mid"
             }
         },
-        "forms": ["TAIL", "WHL", "MEAT", "CLAW"],
+        "forms": [
+            "TAIL",
+            "WHL",
+            "MEAT",
+            "CLAW"
+        ],
         "shell_status": {
-            "hard": {"name": "Hard Shell", "aliases": ["HARD", "HARD SHELL", "HARDSHELL"], "premium": true},
-            "soft": {"name": "Soft Shell", "aliases": ["SOFT", "NEW SHELL", "SHEDDER"], "premium": false}
+            "hard": {
+                "name": "Hard Shell",
+                "aliases": [
+                    "HARD",
+                    "HARD SHELL",
+                    "HARDSHELL"
+                ],
+                "premium": true
+            },
+            "soft": {
+                "name": "Soft Shell",
+                "aliases": [
+                    "SOFT",
+                    "NEW SHELL",
+                    "SHEDDER"
+                ],
+                "premium": false
+            }
         }
     },
     "shrimp": {
@@ -159,71 +326,187 @@
         "species": {
             "white": {
                 "name": "White Shrimp",
-                "aliases": ["WHITE", "PACIFIC WHITE", "VANNAMEI", "LITOPENAEUS VANNAMEI", "WHITELEG"],
+                "aliases": [
+                    "WHITE",
+                    "PACIFIC WHITE",
+                    "VANNAMEI",
+                    "LITOPENAEUS VANNAMEI",
+                    "WHITELEG"
+                ],
                 "harvest": "both",
-                "price_tier": "mid",
-                "typical_price_range": [6.00, 12.00]
+                "price_tier": "mid"
             },
             "pink": {
                 "name": "Pink Shrimp",
-                "aliases": ["PINK", "GULF PINK", "FARFANTEPENAEUS DUORARUM"],
+                "aliases": [
+                    "PINK",
+                    "GULF PINK",
+                    "FARFANTEPENAEUS DUORARUM"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [8.00, 14.00]
+                "price_tier": "premium"
             },
             "brown": {
                 "name": "Brown Shrimp",
-                "aliases": ["BROWN", "GULF BROWN", "FARFANTEPENAEUS AZTECUS"],
+                "aliases": [
+                    "BROWN",
+                    "GULF BROWN",
+                    "FARFANTEPENAEUS AZTECUS"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [7.00, 12.00]
+                "price_tier": "mid"
             },
             "tiger": {
                 "name": "Tiger Shrimp",
-                "aliases": ["TIGER", "BLACK TIGER", "PENAEUS MONODON", "GIANT TIGER"],
+                "aliases": [
+                    "TIGER",
+                    "BLACK TIGER",
+                    "PENAEUS MONODON",
+                    "GIANT TIGER"
+                ],
                 "harvest": "farm",
-                "price_tier": "premium",
-                "typical_price_range": [9.00, 15.00]
+                "price_tier": "premium"
             },
             "rock": {
                 "name": "Rock Shrimp",
-                "aliases": ["ROCK", "SICYONIA BREVIROSTRIS"],
+                "aliases": [
+                    "ROCK",
+                    "SICYONIA BREVIROSTRIS"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [8.00, 12.00]
+                "price_tier": "mid"
             },
             "royal_red": {
                 "name": "Royal Red Shrimp",
-                "aliases": ["ROYAL RED", "ROYAL", "PLEOTICUS ROBUSTUS"],
+                "aliases": [
+                    "ROYAL RED",
+                    "ROYAL",
+                    "PLEOTICUS ROBUSTUS"
+                ],
                 "harvest": "wild",
-                "price_tier": "ultra-premium",
-                "typical_price_range": [12.00, 20.00]
+                "price_tier": "ultra-premium"
             }
         },
         "count_sizes": {
-            "U10": {"per_pound": "under 10", "tier": "colossal"},
-            "U12": {"per_pound": "under 12", "tier": "super colossal"},
-            "U15": {"per_pound": "under 15", "tier": "colossal"},
-            "13/15": {"per_pound": "13-15", "tier": "super jumbo"},
-            "16/20": {"per_pound": "16-20", "tier": "jumbo"},
-            "21/25": {"per_pound": "21-25", "tier": "large"},
-            "26/30": {"per_pound": "26-30", "tier": "medium-large"},
-            "31/35": {"per_pound": "31-35", "tier": "medium"},
-            "36/40": {"per_pound": "36-40", "tier": "medium"},
-            "41/50": {"per_pound": "41-50", "tier": "small"},
-            "51/60": {"per_pound": "51-60", "tier": "small"},
-            "61/70": {"per_pound": "61-70", "tier": "tiny"},
-            "71/90": {"per_pound": "71-90", "tier": "tiny"},
-            "90/110": {"per_pound": "90-110", "tier": "salad"}
+            "U10": {
+                "per_pound": "under 10",
+                "tier": "colossal"
+            },
+            "U12": {
+                "per_pound": "under 12",
+                "tier": "super colossal"
+            },
+            "U15": {
+                "per_pound": "under 15",
+                "tier": "colossal"
+            },
+            "13/15": {
+                "per_pound": "13-15",
+                "tier": "super jumbo"
+            },
+            "16/20": {
+                "per_pound": "16-20",
+                "tier": "jumbo"
+            },
+            "21/25": {
+                "per_pound": "21-25",
+                "tier": "large"
+            },
+            "26/30": {
+                "per_pound": "26-30",
+                "tier": "medium-large"
+            },
+            "31/35": {
+                "per_pound": "31-35",
+                "tier": "medium"
+            },
+            "36/40": {
+                "per_pound": "36-40",
+                "tier": "medium"
+            },
+            "41/50": {
+                "per_pound": "41-50",
+                "tier": "small"
+            },
+            "51/60": {
+                "per_pound": "51-60",
+                "tier": "small"
+            },
+            "61/70": {
+                "per_pound": "61-70",
+                "tier": "tiny"
+            },
+            "71/90": {
+                "per_pound": "71-90",
+                "tier": "tiny"
+            },
+            "90/110": {
+                "per_pound": "90-110",
+                "tier": "salad"
+            }
         },
         "forms": {
-            "SHELL_ON": {"name": "Shell On", "aliases": ["SHELL ON", "SHL ON", "S/ON", "HEAD OFF SHELL ON", "HOSO"]},
-            "P&D": {"name": "Peeled & Deveined", "aliases": ["P&D", "PD", "PEELED DEVEINED", "P/D"]},
-            "PUD": {"name": "Peeled Undeveined", "aliases": ["PUD", "P/UD", "PEELED UNDEVEINED"]},
-            "TAIL_ON": {"name": "Tail On", "aliases": ["TAIL ON", "T/ON", "EZ PEEL", "EZPEEL"]},
-            "TAIL_OFF": {"name": "Tail Off", "aliases": ["TAIL OFF", "T/OFF", "TAILLESS"]},
-            "HEAD_ON": {"name": "Head On", "aliases": ["HEAD ON", "H/ON", "HOON", "WHOLE"]},
-            "COOKED": {"name": "Cooked", "aliases": ["COOKED", "CKD", "COCKTAIL"]}
+            "SHELL_ON": {
+                "name": "Shell On",
+                "aliases": [
+                    "SHELL ON",
+                    "SHL ON",
+                    "S/ON",
+                    "HEAD OFF SHELL ON",
+                    "HOSO"
+                ]
+            },
+            "P&D": {
+                "name": "Peeled & Deveined",
+                "aliases": [
+                    "P&D",
+                    "PD",
+                    "PEELED DEVEINED",
+                    "P/D"
+                ]
+            },
+            "PUD": {
+                "name": "Peeled Undeveined",
+                "aliases": [
+                    "PUD",
+                    "P/UD",
+                    "PEELED UNDEVEINED"
+                ]
+            },
+            "TAIL_ON": {
+                "name": "Tail On",
+                "aliases": [
+                    "TAIL ON",
+                    "T/ON",
+                    "EZ PEEL",
+                    "EZPEEL"
+                ]
+            },
+            "TAIL_OFF": {
+                "name": "Tail Off",
+                "aliases": [
+                    "TAIL OFF",
+                    "T/OFF",
+                    "TAILLESS"
+                ]
+            },
+            "HEAD_ON": {
+                "name": "Head On",
+                "aliases": [
+                    "HEAD ON",
+                    "H/ON",
+                    "HOON",
+                    "WHOLE"
+                ]
+            },
+            "COOKED": {
+                "name": "Cooked",
+                "aliases": [
+                    "COOKED",
+                    "CKD",
+                    "COCKTAIL"
+                ]
+            }
         }
     },
     "cod": {
@@ -231,225 +514,376 @@
         "species": {
             "atlantic": {
                 "name": "Atlantic Cod",
-                "aliases": ["ATLANTIC", "ATL", "GADUS MORHUA", "TRUE COD", "SCROD"],
+                "aliases": [
+                    "ATLANTIC",
+                    "ATL",
+                    "GADUS MORHUA",
+                    "TRUE COD",
+                    "SCROD"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [8.00, 14.00]
+                "price_tier": "premium"
             },
             "pacific": {
                 "name": "Pacific Cod",
-                "aliases": ["PACIFIC", "PAC", "GADUS MACROCEPHALUS", "GRAY COD", "ALASKA COD"],
+                "aliases": [
+                    "PACIFIC",
+                    "PAC",
+                    "GADUS MACROCEPHALUS",
+                    "GRAY COD",
+                    "ALASKA COD"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [6.00, 10.00]
+                "price_tier": "mid"
             },
             "black": {
                 "name": "Black Cod (Sablefish)",
-                "aliases": ["BLACK", "SABLEFISH", "SABLE", "BUTTERFISH", "ANOPLOPOMA FIMBRIA"],
+                "aliases": [
+                    "BLACK",
+                    "SABLEFISH",
+                    "SABLE",
+                    "BUTTERFISH",
+                    "ANOPLOPOMA FIMBRIA"
+                ],
                 "harvest": "wild",
-                "price_tier": "ultra-premium",
-                "typical_price_range": [15.00, 25.00]
+                "price_tier": "ultra-premium"
             },
             "ling": {
                 "name": "Lingcod",
-                "aliases": ["LING", "LINGCOD", "OPHIODON ELONGATUS"],
+                "aliases": [
+                    "LING",
+                    "LINGCOD",
+                    "OPHIODON ELONGATUS"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [10.00, 16.00]
+                "price_tier": "premium"
             }
         },
-        "forms": ["FIL", "LOIN", "PRTN", "WHL", "STEAK"]
+        "forms": [
+            "FIL",
+            "LOIN",
+            "PRTN",
+            "WHL",
+            "STEAK"
+        ]
     },
     "haddock": {
         "category": "Groundfish",
         "species": {
             "atlantic": {
                 "name": "Haddock",
-                "aliases": ["HADDOCK", "HAD", "MELANOGRAMMUS AEGLEFINUS"],
+                "aliases": [
+                    "HADDOCK",
+                    "HAD",
+                    "MELANOGRAMMUS AEGLEFINUS"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [8.00, 14.00]
+                "price_tier": "premium"
             }
         },
-        "forms": ["FIL", "LOIN", "PRTN"]
+        "forms": [
+            "FIL",
+            "LOIN",
+            "PRTN"
+        ]
     },
     "pollock": {
         "category": "Groundfish",
         "species": {
             "alaska": {
                 "name": "Alaska Pollock",
-                "aliases": ["ALASKA", "ALASKAN", "WALLEYE", "GADUS CHALCOGRAMMUS", "THERAGRA CHALCOGRAMMA"],
+                "aliases": [
+                    "ALASKA",
+                    "ALASKAN",
+                    "WALLEYE",
+                    "GADUS CHALCOGRAMMUS",
+                    "THERAGRA CHALCOGRAMMA"
+                ],
                 "harvest": "wild",
-                "price_tier": "value",
-                "typical_price_range": [3.00, 6.00]
+                "price_tier": "value"
             },
             "atlantic": {
                 "name": "Atlantic Pollock",
-                "aliases": ["ATLANTIC", "BOSTON BLUEFISH", "POLLACHIUS VIRENS"],
+                "aliases": [
+                    "ATLANTIC",
+                    "BOSTON BLUEFISH",
+                    "POLLACHIUS VIRENS"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [5.00, 9.00]
+                "price_tier": "mid"
             }
         },
-        "forms": ["FIL", "LOIN", "PRTN", "BLOCK"]
+        "forms": [
+            "FIL",
+            "LOIN",
+            "PRTN",
+            "BLOCK"
+        ]
     },
     "halibut": {
         "category": "Flatfish",
         "species": {
             "pacific": {
                 "name": "Pacific Halibut",
-                "aliases": ["PACIFIC", "PAC", "HIPPOGLOSSUS STENOLEPIS", "ALASKA"],
+                "aliases": [
+                    "PACIFIC",
+                    "PAC",
+                    "HIPPOGLOSSUS STENOLEPIS",
+                    "ALASKA"
+                ],
                 "harvest": "wild",
-                "price_tier": "ultra-premium",
-                "typical_price_range": [18.00, 30.00]
+                "price_tier": "ultra-premium"
             },
             "atlantic": {
                 "name": "Atlantic Halibut",
-                "aliases": ["ATLANTIC", "ATL", "HIPPOGLOSSUS HIPPOGLOSSUS"],
+                "aliases": [
+                    "ATLANTIC",
+                    "ATL",
+                    "HIPPOGLOSSUS HIPPOGLOSSUS"
+                ],
                 "harvest": "wild",
-                "price_tier": "ultra-premium",
-                "typical_price_range": [20.00, 35.00]
+                "price_tier": "ultra-premium"
             },
             "california": {
                 "name": "California Halibut",
-                "aliases": ["CALIFORNIA", "CAL", "PARALICHTHYS CALIFORNICUS"],
+                "aliases": [
+                    "CALIFORNIA",
+                    "CAL",
+                    "PARALICHTHYS CALIFORNICUS"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [12.00, 20.00]
+                "price_tier": "premium"
             }
         },
-        "forms": ["FIL", "STEAK", "PRTN", "CHEEKS"]
+        "forms": [
+            "FIL",
+            "STEAK",
+            "PRTN",
+            "CHEEKS"
+        ]
     },
     "flounder": {
         "category": "Flatfish",
         "species": {
             "generic": {
                 "name": "Flounder",
-                "aliases": ["FLOUNDER", "FLUKE", "SUMMER FLOUNDER", "WINTER FLOUNDER"],
+                "aliases": [
+                    "FLOUNDER",
+                    "FLUKE",
+                    "SUMMER FLOUNDER",
+                    "WINTER FLOUNDER"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [6.00, 12.00]
+                "price_tier": "mid"
             }
         },
-        "forms": ["FIL", "WHL"]
+        "forms": [
+            "FIL",
+            "WHL"
+        ]
     },
     "sole": {
         "category": "Flatfish",
         "species": {
             "dover": {
                 "name": "Dover Sole",
-                "aliases": ["DOVER", "TRUE DOVER", "SOLEA SOLEA"],
+                "aliases": [
+                    "DOVER",
+                    "TRUE DOVER",
+                    "SOLEA SOLEA"
+                ],
                 "harvest": "wild",
-                "price_tier": "ultra-premium",
-                "typical_price_range": [15.00, 25.00]
+                "price_tier": "ultra-premium"
             },
             "petrale": {
                 "name": "Petrale Sole",
-                "aliases": ["PETRALE", "EOPSETTA JORDANI"],
+                "aliases": [
+                    "PETRALE",
+                    "EOPSETTA JORDANI"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [10.00, 16.00]
+                "price_tier": "premium"
             },
             "lemon": {
                 "name": "Lemon Sole",
-                "aliases": ["LEMON", "MICROSTOMUS KITT"],
+                "aliases": [
+                    "LEMON",
+                    "MICROSTOMUS KITT"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [7.00, 12.00]
+                "price_tier": "mid"
             },
             "rex": {
                 "name": "Rex Sole",
-                "aliases": ["REX", "GLYPTOCEPHALUS ZACHIRUS"],
+                "aliases": [
+                    "REX",
+                    "GLYPTOCEPHALUS ZACHIRUS"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [6.00, 10.00]
+                "price_tier": "mid"
             },
             "gray": {
                 "name": "Gray Sole",
-                "aliases": ["GRAY", "GREY", "WITCH FLOUNDER", "GLYPTOCEPHALUS CYNOGLOSSUS"],
+                "aliases": [
+                    "GRAY",
+                    "GREY",
+                    "WITCH FLOUNDER",
+                    "GLYPTOCEPHALUS CYNOGLOSSUS"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [7.00, 12.00]
+                "price_tier": "mid"
             }
         },
-        "forms": ["FIL", "WHL"]
+        "forms": [
+            "FIL",
+            "WHL"
+        ]
     },
     "tilapia": {
         "category": "Freshwater",
         "species": {
             "generic": {
                 "name": "Tilapia",
-                "aliases": ["TILAPIA", "OREOCHROMIS"],
+                "aliases": [
+                    "TILAPIA",
+                    "OREOCHROMIS"
+                ],
                 "harvest": "farm",
-                "price_tier": "economy",
-                "typical_price_range": [3.00, 6.00]
+                "price_tier": "economy"
             }
         },
-        "forms": ["FIL", "WHL"]
+        "forms": [
+            "FIL",
+            "WHL"
+        ]
     },
     "swai": {
         "category": "Freshwater",
         "species": {
             "generic": {
                 "name": "Swai (Pangasius)",
-                "aliases": ["SWAI", "PANGASIUS", "BASA", "TRA", "SUTCHI", "STRIPED PANGASIUS"],
+                "aliases": [
+                    "SWAI",
+                    "PANGASIUS",
+                    "BASA",
+                    "TRA",
+                    "SUTCHI",
+                    "STRIPED PANGASIUS"
+                ],
                 "harvest": "farm",
-                "price_tier": "economy",
-                "typical_price_range": [2.00, 5.00]
+                "price_tier": "economy"
             }
         },
-        "forms": ["FIL"]
+        "forms": [
+            "FIL"
+        ]
     },
     "catfish": {
         "category": "Freshwater",
         "species": {
             "channel": {
                 "name": "Channel Catfish",
-                "aliases": ["CHANNEL", "US", "DOMESTIC", "ICTALURUS PUNCTATUS"],
+                "aliases": [
+                    "CHANNEL",
+                    "US",
+                    "DOMESTIC",
+                    "ICTALURUS PUNCTATUS"
+                ],
                 "harvest": "farm",
-                "price_tier": "mid",
-                "typical_price_range": [5.00, 9.00]
+                "price_tier": "mid"
             }
         },
-        "forms": ["FIL", "WHL", "NUG", "STRIP"]
+        "forms": [
+            "FIL",
+            "WHL",
+            "NUG",
+            "STRIP"
+        ]
     },
     "scallop": {
         "category": "Mollusk",
         "species": {
             "sea": {
                 "name": "Sea Scallop",
-                "aliases": ["SEA", "ATLANTIC SEA", "PLACOPECTEN MAGELLANICUS", "DIVER"],
+                "aliases": [
+                    "SEA",
+                    "ATLANTIC SEA",
+                    "PLACOPECTEN MAGELLANICUS",
+                    "DIVER"
+                ],
                 "harvest": "wild",
-                "price_tier": "ultra-premium",
-                "typical_price_range": [15.00, 30.00]
+                "price_tier": "ultra-premium"
             },
             "bay": {
                 "name": "Bay Scallop",
-                "aliases": ["BAY", "ARGOPECTEN IRRADIANS"],
+                "aliases": [
+                    "BAY",
+                    "ARGOPECTEN IRRADIANS"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [12.00, 20.00]
+                "price_tier": "premium"
             },
             "calico": {
                 "name": "Calico Scallop",
-                "aliases": ["CALICO", "ARGOPECTEN GIBBUS"],
+                "aliases": [
+                    "CALICO",
+                    "ARGOPECTEN GIBBUS"
+                ],
                 "harvest": "wild",
-                "price_tier": "value",
-                "typical_price_range": [6.00, 10.00]
+                "price_tier": "value"
             }
         },
         "count_sizes": {
-            "U10": {"per_pound": "under 10", "tier": "super colossal"},
-            "U12": {"per_pound": "under 12", "tier": "colossal"},
-            "10/20": {"per_pound": "10-20", "tier": "jumbo"},
-            "20/30": {"per_pound": "20-30", "tier": "large"},
-            "30/40": {"per_pound": "30-40", "tier": "medium"},
-            "40/60": {"per_pound": "40-60", "tier": "small"},
-            "60/80": {"per_pound": "60-80", "tier": "bay"}
+            "U10": {
+                "per_pound": "under 10",
+                "tier": "super colossal"
+            },
+            "U12": {
+                "per_pound": "under 12",
+                "tier": "colossal"
+            },
+            "10/20": {
+                "per_pound": "10-20",
+                "tier": "jumbo"
+            },
+            "20/30": {
+                "per_pound": "20-30",
+                "tier": "large"
+            },
+            "30/40": {
+                "per_pound": "30-40",
+                "tier": "medium"
+            },
+            "40/60": {
+                "per_pound": "40-60",
+                "tier": "small"
+            },
+            "60/80": {
+                "per_pound": "60-80",
+                "tier": "bay"
+            }
         },
         "grades": {
-            "dry": {"name": "Dry Pack", "aliases": ["DRY", "DRY PACK", "CHEMICAL FREE", "NO STP"], "premium": true},
-            "wet": {"name": "Wet Pack", "aliases": ["WET", "WET PACK", "STP", "TREATED"], "premium": false}
+            "dry": {
+                "name": "Dry Pack",
+                "aliases": [
+                    "DRY",
+                    "DRY PACK",
+                    "CHEMICAL FREE",
+                    "NO STP"
+                ],
+                "premium": true
+            },
+            "wet": {
+                "name": "Wet Pack",
+                "aliases": [
+                    "WET",
+                    "WET PACK",
+                    "STP",
+                    "TREATED"
+                ],
+                "premium": false
+            }
         }
     },
     "tuna": {
@@ -457,184 +891,665 @@
         "species": {
             "yellowfin": {
                 "name": "Yellowfin Tuna",
-                "aliases": ["YELLOWFIN", "YF", "AHI", "THUNNUS ALBACARES"],
+                "aliases": [
+                    "YELLOWFIN",
+                    "YF",
+                    "AHI",
+                    "THUNNUS ALBACARES"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [10.00, 20.00]
+                "price_tier": "premium"
             },
             "bigeye": {
                 "name": "Bigeye Tuna",
-                "aliases": ["BIGEYE", "BE", "THUNNUS OBESUS"],
+                "aliases": [
+                    "BIGEYE",
+                    "BE",
+                    "THUNNUS OBESUS"
+                ],
                 "harvest": "wild",
-                "price_tier": "ultra-premium",
-                "typical_price_range": [15.00, 30.00]
+                "price_tier": "ultra-premium"
             },
             "bluefin": {
                 "name": "Bluefin Tuna",
-                "aliases": ["BLUEFIN", "BF", "THUNNUS THYNNUS", "MAGURO", "HON MAGURO"],
+                "aliases": [
+                    "BLUEFIN",
+                    "BF",
+                    "THUNNUS THYNNUS",
+                    "MAGURO",
+                    "HON MAGURO"
+                ],
                 "harvest": "wild",
-                "price_tier": "ultra-premium",
-                "typical_price_range": [25.00, 100.00]
+                "price_tier": "ultra-premium"
             },
             "albacore": {
                 "name": "Albacore Tuna",
-                "aliases": ["ALBACORE", "ALB", "WHITE", "THUNNUS ALALUNGA", "TOMBO"],
+                "aliases": [
+                    "ALBACORE",
+                    "ALB",
+                    "WHITE",
+                    "THUNNUS ALALUNGA",
+                    "TOMBO"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [8.00, 15.00]
+                "price_tier": "mid"
             },
             "skipjack": {
                 "name": "Skipjack Tuna",
-                "aliases": ["SKIPJACK", "SKJ", "KATSUWONUS PELAMIS", "BONITO"],
+                "aliases": [
+                    "SKIPJACK",
+                    "SKJ",
+                    "KATSUWONUS PELAMIS",
+                    "BONITO"
+                ],
                 "harvest": "wild",
-                "price_tier": "value",
-                "typical_price_range": [4.00, 8.00]
+                "price_tier": "value"
             }
         },
         "grades": {
-            "sashimi": {"name": "Sashimi Grade", "aliases": ["SASHIMI", "#1", "GRADE 1", "1+"], "premium": true},
-            "grill": {"name": "Grill Grade", "aliases": ["GRILL", "#2", "GRADE 2", "2+"], "premium": false}
+            "sashimi": {
+                "name": "Sashimi Grade",
+                "aliases": [
+                    "SASHIMI",
+                    "#1",
+                    "GRADE 1",
+                    "1+"
+                ],
+                "premium": true
+            },
+            "grill": {
+                "name": "Grill Grade",
+                "aliases": [
+                    "GRILL",
+                    "#2",
+                    "GRADE 2",
+                    "2+"
+                ],
+                "premium": false
+            }
         },
-        "forms": ["LOIN", "STEAK", "PRTN", "SAKU", "POKE"]
+        "forms": [
+            "LOIN",
+            "STEAK",
+            "PRTN",
+            "SAKU",
+            "POKE"
+        ]
     },
     "mahi": {
         "category": "Finfish",
         "species": {
             "mahi": {
                 "name": "Mahi Mahi",
-                "aliases": ["MAHI", "MAHI MAHI", "MAHIMAHI", "DOLPHIN", "DORADO", "CORYPHAENA HIPPURUS"],
+                "aliases": [
+                    "MAHI",
+                    "MAHI MAHI",
+                    "MAHIMAHI",
+                    "DOLPHIN",
+                    "DORADO",
+                    "CORYPHAENA HIPPURUS"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [7.00, 12.00]
+                "price_tier": "mid"
             }
         },
-        "forms": ["FIL", "PRTN", "LOIN"]
+        "forms": [
+            "FIL",
+            "PRTN",
+            "LOIN"
+        ]
     },
     "swordfish": {
         "category": "Finfish",
         "species": {
             "swordfish": {
                 "name": "Swordfish",
-                "aliases": ["SWORDFISH", "SWORD", "XIPHIAS GLADIUS", "BROADBILL"],
+                "aliases": [
+                    "SWORDFISH",
+                    "SWORD",
+                    "XIPHIAS GLADIUS",
+                    "BROADBILL"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [12.00, 20.00]
+                "price_tier": "premium"
             }
         },
-        "forms": ["STEAK", "LOIN", "PRTN"]
+        "forms": [
+            "STEAK",
+            "LOIN",
+            "PRTN"
+        ]
     },
     "calamari": {
         "category": "Mollusk",
         "species": {
             "generic": {
                 "name": "Calamari (Squid)",
-                "aliases": ["CALAMARI", "SQUID", "LOLIGO", "ILLEX"],
+                "aliases": [
+                    "CALAMARI",
+                    "SQUID",
+                    "LOLIGO",
+                    "ILLEX"
+                ],
                 "harvest": "wild",
-                "price_tier": "value",
-                "typical_price_range": [4.00, 8.00]
+                "price_tier": "value"
             }
         },
-        "forms": ["RING", "TUBE", "TENT", "WHL", "STEAK"]
+        "forms": [
+            "RING",
+            "TUBE",
+            "TENT",
+            "WHL",
+            "STEAK"
+        ]
     },
     "octopus": {
         "category": "Mollusk",
         "species": {
             "generic": {
                 "name": "Octopus",
-                "aliases": ["OCTOPUS", "PULPO", "TAKO"],
+                "aliases": [
+                    "OCTOPUS",
+                    "PULPO",
+                    "TAKO"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [6.00, 12.00]
+                "price_tier": "mid"
             }
         },
-        "forms": ["TENT", "WHL"]
+        "forms": [
+            "TENT",
+            "WHL"
+        ]
     },
     "clam": {
         "category": "Mollusk",
         "species": {
             "littleneck": {
                 "name": "Littleneck Clam",
-                "aliases": ["LITTLENECK", "LITTLE NECK"],
+                "aliases": [
+                    "LITTLENECK",
+                    "LITTLE NECK"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [8.00, 15.00]
+                "price_tier": "premium"
             },
             "cherrystone": {
                 "name": "Cherrystone Clam",
-                "aliases": ["CHERRYSTONE", "CHERRY STONE"],
+                "aliases": [
+                    "CHERRYSTONE",
+                    "CHERRY STONE"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [6.00, 12.00]
+                "price_tier": "mid"
             },
             "topneck": {
                 "name": "Topneck Clam",
-                "aliases": ["TOPNECK", "TOP NECK"],
+                "aliases": [
+                    "TOPNECK",
+                    "TOP NECK"
+                ],
                 "harvest": "wild",
-                "price_tier": "mid",
-                "typical_price_range": [5.00, 10.00]
+                "price_tier": "mid"
             },
             "chowder": {
                 "name": "Chowder Clam",
-                "aliases": ["CHOWDER", "QUAHOG"],
+                "aliases": [
+                    "CHOWDER",
+                    "QUAHOG"
+                ],
                 "harvest": "wild",
-                "price_tier": "value",
-                "typical_price_range": [3.00, 6.00]
+                "price_tier": "value"
             },
             "razor": {
                 "name": "Razor Clam",
-                "aliases": ["RAZOR", "PACIFIC RAZOR"],
+                "aliases": [
+                    "RAZOR",
+                    "PACIFIC RAZOR"
+                ],
                 "harvest": "wild",
-                "price_tier": "premium",
-                "typical_price_range": [10.00, 18.00]
+                "price_tier": "premium"
             },
             "manila": {
                 "name": "Manila Clam",
-                "aliases": ["MANILA", "STEAMER"],
+                "aliases": [
+                    "MANILA",
+                    "STEAMER"
+                ],
                 "harvest": "both",
-                "price_tier": "mid",
-                "typical_price_range": [6.00, 12.00]
+                "price_tier": "mid"
             }
         },
-        "forms": ["WHL", "MEAT", "STRIP", "CHOPPED"]
+        "forms": [
+            "WHL",
+            "MEAT",
+            "STRIP",
+            "CHOPPED"
+        ]
     },
     "oyster": {
         "category": "Mollusk",
         "species": {
             "eastern": {
                 "name": "Eastern Oyster",
-                "aliases": ["EASTERN", "ATLANTIC", "CRASSOSTREA VIRGINICA", "BLUEPOINT", "WELLFLEET"],
+                "aliases": [
+                    "EASTERN",
+                    "ATLANTIC",
+                    "CRASSOSTREA VIRGINICA",
+                    "BLUEPOINT",
+                    "WELLFLEET"
+                ],
                 "harvest": "both",
-                "price_tier": "premium",
-                "typical_price_range": [0.75, 2.00]
+                "price_tier": "premium"
             },
             "pacific": {
                 "name": "Pacific Oyster",
-                "aliases": ["PACIFIC", "CRASSOSTREA GIGAS", "KUMAMOTO"],
+                "aliases": [
+                    "PACIFIC",
+                    "CRASSOSTREA GIGAS",
+                    "KUMAMOTO"
+                ],
                 "harvest": "both",
-                "price_tier": "premium",
-                "typical_price_range": [0.75, 2.50]
+                "price_tier": "premium"
             }
         },
-        "forms": ["WHL", "HALF_SHELL", "MEAT", "SHUCKED"]
+        "forms": [
+            "WHL",
+            "HALF_SHELL",
+            "MEAT",
+            "SHUCKED"
+        ]
     },
     "mussel": {
         "category": "Mollusk",
         "species": {
             "blue": {
                 "name": "Blue Mussel",
-                "aliases": ["BLUE", "MYTILUS EDULIS", "PEI", "PRINCE EDWARD ISLAND"],
+                "aliases": [
+                    "BLUE",
+                    "MYTILUS EDULIS",
+                    "PEI",
+                    "PRINCE EDWARD ISLAND"
+                ],
                 "harvest": "both",
-                "price_tier": "value",
-                "typical_price_range": [3.00, 6.00]
+                "price_tier": "value"
             },
             "green": {
                 "name": "Green Lip Mussel",
-                "aliases": ["GREEN", "GREEN LIP", "NEW ZEALAND", "PERNA CANALICULUS"],
+                "aliases": [
+                    "GREEN",
+                    "GREEN LIP",
+                    "NEW ZEALAND",
+                    "PERNA CANALICULUS"
+                ],
                 "harvest": "farm",
-                "price_tier": "mid",
-                "typical_price_range": [5.00, 10.00]
+                "price_tier": "mid"
             }
         },
-        "forms": ["WHL", "MEAT", "HALF_SHELL"]
+        "forms": [
+            "WHL",
+            "MEAT",
+            "HALF_SHELL"
+        ]
+    },
+    "snapper": {
+        "category": "Finfish",
+        "species": {
+            "red": {
+                "name": "Red Snapper",
+                "aliases": [
+                    "RED SNAPPER",
+                    "RED",
+                    "AMERICAN RED",
+                    "LUTJANUS CAMPECHANUS",
+                    "GENUINE RED"
+                ],
+                "harvest": "wild",
+                "price_tier": "premium"
+            },
+            "yellowtail": {
+                "name": "Yellowtail Snapper",
+                "aliases": [
+                    "YELLOWTAIL",
+                    "YT SNAPPER",
+                    "OCYURUS CHRYSURUS",
+                    "YELLOWTAIL SNAPPER"
+                ],
+                "harvest": "wild",
+                "price_tier": "premium"
+            },
+            "vermilion": {
+                "name": "Vermilion Snapper",
+                "aliases": [
+                    "VERMILION",
+                    "BEELINER",
+                    "RHOMBOPLITES AURORUBENS",
+                    "VERMILION SNAPPER"
+                ],
+                "harvest": "wild",
+                "price_tier": "mid"
+            },
+            "lane": {
+                "name": "Lane Snapper",
+                "aliases": [
+                    "LANE",
+                    "LANE SNAPPER",
+                    "LUTJANUS SYNAGRIS"
+                ],
+                "harvest": "wild",
+                "price_tier": "mid"
+            },
+            "mangrove": {
+                "name": "Mangrove Snapper",
+                "aliases": [
+                    "MANGROVE",
+                    "GRAY SNAPPER",
+                    "MANGROVE SNAPPER",
+                    "LUTJANUS GRISEUS"
+                ],
+                "harvest": "wild",
+                "price_tier": "mid"
+            },
+            "silk": {
+                "name": "Silk Snapper",
+                "aliases": [
+                    "SILK",
+                    "QUEEN SNAPPER",
+                    "SILK SNAPPER",
+                    "LUTJANUS VIVANUS"
+                ],
+                "harvest": "wild",
+                "price_tier": "mid"
+            }
+        },
+        "forms": [
+            "FIL",
+            "WHL",
+            "PRTN"
+        ]
+    },
+    "grouper": {
+        "category": "Finfish",
+        "species": {
+            "red": {
+                "name": "Red Grouper",
+                "aliases": [
+                    "RED GROUPER",
+                    "RED",
+                    "EPINEPHELUS MORIO"
+                ],
+                "harvest": "wild",
+                "price_tier": "premium"
+            },
+            "black": {
+                "name": "Black Grouper",
+                "aliases": [
+                    "BLACK GROUPER",
+                    "BLACK",
+                    "MYCTEROPERCA BONACI"
+                ],
+                "harvest": "wild",
+                "price_tier": "premium"
+            },
+            "gag": {
+                "name": "Gag Grouper",
+                "aliases": [
+                    "GAG",
+                    "GAG GROUPER",
+                    "MYCTEROPERCA MICROLEPIS"
+                ],
+                "harvest": "wild",
+                "price_tier": "premium"
+            },
+            "yellowedge": {
+                "name": "Yellowedge Grouper",
+                "aliases": [
+                    "YELLOWEDGE",
+                    "YELLOWEDGE GROUPER",
+                    "HYPORTHODUS FLAVOLIMBATUS"
+                ],
+                "harvest": "wild",
+                "price_tier": "premium"
+            },
+            "scamp": {
+                "name": "Scamp Grouper",
+                "aliases": [
+                    "SCAMP",
+                    "SCAMP GROUPER",
+                    "MYCTEROPERCA PHENAX"
+                ],
+                "harvest": "wild",
+                "price_tier": "premium"
+            }
+        },
+        "forms": [
+            "FIL",
+            "WHL",
+            "PRTN",
+            "STEAK"
+        ]
+    },
+    "branzino": {
+        "category": "Finfish",
+        "species": {
+            "generic": {
+                "name": "Branzino (European Sea Bass)",
+                "aliases": [
+                    "BRANZINO",
+                    "BRONZINO",
+                    "EUROPEAN SEA BASS",
+                    "LOUP DE MER",
+                    "DICENTRARCHUS LABRAX",
+                    "MEDITERRANEAN SEA BASS",
+                    "SPIGOLA"
+                ],
+                "harvest": "farm",
+                "price_tier": "premium"
+            }
+        },
+        "forms": [
+            "WHL",
+            "FIL"
+        ]
+    },
+    "sea_bass": {
+        "category": "Finfish",
+        "species": {
+            "chilean": {
+                "name": "Chilean Sea Bass (Patagonian Toothfish)",
+                "aliases": [
+                    "CHILEAN SEA BASS",
+                    "CHILEAN",
+                    "PATAGONIAN TOOTHFISH",
+                    "DISSOSTICHUS ELEGINOIDES",
+                    "MERO",
+                    "TOOTHFISH"
+                ],
+                "harvest": "wild",
+                "price_tier": "ultra-premium"
+            },
+            "black": {
+                "name": "Black Sea Bass",
+                "aliases": [
+                    "BLACK SEA BASS",
+                    "CENTROPRISTIS STRIATA"
+                ],
+                "harvest": "wild",
+                "price_tier": "premium"
+            },
+            "striped": {
+                "name": "Striped Bass",
+                "aliases": [
+                    "STRIPED BASS",
+                    "STRIPER",
+                    "ROCKFISH",
+                    "MORONE SAXATILIS",
+                    "HYBRID STRIPED"
+                ],
+                "harvest": "both",
+                "price_tier": "premium"
+            }
+        },
+        "forms": [
+            "FIL",
+            "PRTN",
+            "WHL"
+        ]
+    },
+    "trout": {
+        "category": "Finfish",
+        "species": {
+            "rainbow": {
+                "name": "Rainbow Trout",
+                "aliases": [
+                    "RAINBOW",
+                    "RAINBOW TROUT",
+                    "ONCORHYNCHUS MYKISS"
+                ],
+                "harvest": "farm",
+                "price_tier": "mid"
+            },
+            "steelhead": {
+                "name": "Steelhead Trout",
+                "aliases": [
+                    "STEELHEAD",
+                    "STEELHEAD TROUT",
+                    "OCEAN TROUT"
+                ],
+                "harvest": "both",
+                "price_tier": "premium"
+            },
+            "brook": {
+                "name": "Brook Trout",
+                "aliases": [
+                    "BROOK",
+                    "BROOK TROUT",
+                    "SPECKLED",
+                    "SALVELINUS FONTINALIS"
+                ],
+                "harvest": "wild",
+                "price_tier": "premium"
+            }
+        },
+        "forms": [
+            "FIL",
+            "WHL",
+            "PRTN"
+        ],
+        "trim_levels": {
+            "A": {
+                "description": "Backbone off, bellybone off",
+                "skin": "on",
+                "foodservice": false
+            },
+            "B": {
+                "description": "A + backfin off, collarbone off, belly fat off",
+                "skin": "on",
+                "foodservice": false
+            },
+            "C": {
+                "description": "B + pin bone out",
+                "skin": "on",
+                "foodservice": false
+            },
+            "D": {
+                "description": "C + back trimmed, tailpiece off, belly membrane off",
+                "skin": "on",
+                "foodservice": true
+            },
+            "E": {
+                "description": "D + skin off",
+                "skin": "off",
+                "foodservice": true
+            }
+        }
+    },
+    "barramundi": {
+        "category": "Finfish",
+        "species": {
+            "generic": {
+                "name": "Barramundi",
+                "aliases": [
+                    "BARRAMUNDI",
+                    "BARRA",
+                    "LATES CALCARIFER",
+                    "ASIAN SEA BASS"
+                ],
+                "harvest": "farm",
+                "price_tier": "mid"
+            }
+        },
+        "forms": [
+            "FIL",
+            "PRTN",
+            "WHL"
+        ]
+    },
+    "wahoo": {
+        "category": "Finfish",
+        "species": {
+            "generic": {
+                "name": "Wahoo",
+                "aliases": [
+                    "WAHOO",
+                    "ONO",
+                    "ACANTHOCYBIUM SOLANDRI"
+                ],
+                "harvest": "wild",
+                "price_tier": "premium"
+            }
+        },
+        "forms": [
+            "FIL",
+            "PRTN",
+            "STEAK",
+            "LOIN"
+        ]
+    },
+    "monkfish": {
+        "category": "Finfish",
+        "species": {
+            "generic": {
+                "name": "Monkfish",
+                "aliases": [
+                    "MONKFISH",
+                    "MONK",
+                    "GOOSEFISH",
+                    "ANGLERFISH",
+                    "LOPHIUS AMERICANUS",
+                    "LOPHIUS PISCATORIUS",
+                    "POOR MANS LOBSTER"
+                ],
+                "harvest": "wild",
+                "price_tier": "premium"
+            }
+        },
+        "forms": [
+            "TAIL",
+            "FIL",
+            "WHL"
+        ]
+    },
+    "crawfish": {
+        "category": "Crustacean",
+        "species": {
+            "generic": {
+                "name": "Crawfish",
+                "aliases": [
+                    "CRAWFISH",
+                    "CRAYFISH",
+                    "CRAWDAD",
+                    "MUDBUG",
+                    "ECREVISSE"
+                ],
+                "harvest": "both",
+                "price_tier": "mid"
+            }
+        },
+        "forms": [
+            "WHL",
+            "TAIL",
+            "MEAT"
+        ]
     }
 }
