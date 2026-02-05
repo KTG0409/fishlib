@@ -33,7 +33,7 @@ Example usage:
     print(result['confidence'])     # 0.92
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "Karen Morton"
 __license__ = "MIT"
 
