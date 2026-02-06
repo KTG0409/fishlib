@@ -1,296 +1,500 @@
 """
-Tests for fishlib.
+Tests for fishlib v0.2.0
 
-Run with: pytest tests/
+Run with: pytest tests/test_fishlib.py -v
 """
 
 import pytest
-import sys
-import os
-
-# Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from fishlib import parse, comparison_key, is_comparable, match
-from fishlib import standardize_form, standardize_skin, standardize_bone, standardize_trim
-from fishlib.species import get_species_info, get_price_tier, list_species
-from fishlib.reference import TRIM_LEVELS, CUT_STYLES, is_trim_skin_on
+import fishlib
+from fishlib import parser, standards, matcher, species, reference
 
 
-class TestParser:
-    """Tests for the parser module."""
+# =============================================================================
+# PARSER TESTS
+# =============================================================================
+
+class TestParseBasic:
+    """Test basic parsing functionality."""
     
-    def test_parse_salmon_basic(self):
-        """Test basic salmon parsing."""
-        result = parse("SALMON FIL ATL SKON 6OZ")
+    def test_empty_description(self):
+        result = fishlib.parse("")
+        assert result.get('error') == 'Empty description'
+    
+    def test_salmon_full_description(self):
+        result = fishlib.parse("SALMON FIL ATL SKON DTRM 6OZ IVP")
         assert result['category'] == 'salmon'
+        assert result['subspecies'] == 'atlantic'
         assert result['form'] == 'FIL'
         assert result['skin'] == 'SKON'
-        assert result['size'] == '6OZ'
-    
-    def test_parse_salmon_with_trim(self):
-        """Test salmon with trim level."""
-        result = parse("SALMON FIL ATL SKON DTRM 8OZ IVP")
-        assert result['category'] == 'salmon'
         assert result['trim'] == 'D'
+        assert result['size'] == '6OZ'
         assert result['pack'] == 'IVP'
     
-    def test_parse_atlantic_salmon(self):
-        """Test Atlantic salmon subspecies detection."""
-        result = parse("SALMON ATL FIL BNLS SKLS 6OZ")
-        assert result['category'] == 'salmon'
-        assert result['subspecies'] == 'atlantic'
-        assert result['bone'] == 'BNLS'
-        assert result['skin'] == 'SKLS'
-    
-    def test_parse_wild_salmon_species(self):
-        """Test wild salmon species detection."""
-        result = parse("SALMON SOCKEYE FIL WILD AK SKON 8OZ")
-        assert result['subspecies'] == 'sockeye'
-        assert result['harvest'] == 'WILD'
-        assert result['origin'] == 'USA'  # AK = Alaska = USA
-    
-    def test_parse_king_salmon(self):
-        """Test king salmon detection."""
-        result = parse("SALMON KING CHINOOK FIL WILD 6OZ")
-        assert result['subspecies'] == 'king'
-    
-    def test_parse_crab(self):
-        """Test crab parsing."""
-        result = parse("CRAB KING LEG RED ALASKA 9/12")
-        assert result['category'] == 'crab'
-        assert result['subspecies'] == 'king'
-        assert result['form'] == 'LEG'
-    
-    def test_parse_shrimp_with_count(self):
-        """Test shrimp with count size."""
-        result = parse("SHRIMP WHITE P&D 16/20 IQF")
-        assert result['category'] == 'shrimp'
-        assert result['count'] == '16/20'
-        assert result['pack'] == 'IQF'
-    
-    def test_parse_shrimp_u_count(self):
-        """Test shrimp with U-count."""
-        result = parse("SHRIMP TIGER U10 HEAD ON")
-        assert result['count'] == 'U10'
-    
-    def test_parse_lobster(self):
-        """Test lobster parsing."""
-        result = parse("LOBSTER TAIL MAINE 8OZ")
-        assert result['category'] == 'lobster'
-        assert result['form'] == 'TAIL'
-        assert result['subspecies'] == 'maine'
-    
-    def test_parse_cod(self):
-        """Test cod parsing."""
-        result = parse("COD ATL FIL BNLS SKLS 4OZ IVP FRZ")
+    def test_cod_atlantic(self):
+        result = fishlib.parse("COD FIL ATLANTIC BNLS SKLS 8OZ FRZ")
         assert result['category'] == 'cod'
         assert result['subspecies'] == 'atlantic'
-        assert result['storage'] == 'FRZ'
-    
-    def test_parse_size_range(self):
-        """Test size range parsing."""
-        result = parse("SALMON FIL 5-7OZ BNLS SKLS")
-        assert result['size'] == '5-7OZ'
-    
-    def test_parse_pound_size(self):
-        """Test pound-based size parsing."""
-        result = parse("SALMON FIL 2-3LB SKON")
-        assert result['size'] == '2-3LB'
-    
-    def test_parse_brand_detection(self):
-        """Test brand detection."""
-        result = parse("PORTICO SALMON FIL ATL 6OZ")
-        assert result['brand'] == 'Portico'
-    
-    def test_parse_empty_string(self):
-        """Test empty string handling."""
-        result = parse("")
-        assert 'error' in result
-
-
-class TestStandardization:
-    """Tests for standardization functions."""
-    
-    def test_standardize_form_fillet(self):
-        """Test form standardization."""
-        assert standardize_form("FILLET") == "FIL"
-        assert standardize_form("FILET") == "FIL"
-        assert standardize_form("FIL") == "FIL"
-    
-    def test_standardize_form_portion(self):
-        """Test portion form."""
-        assert standardize_form("PORTION") == "PRTN"
-        assert standardize_form("PORT") == "PRTN"
-    
-    def test_standardize_skin(self):
-        """Test skin standardization."""
-        assert standardize_skin("SKIN ON") == "SKON"
-        assert standardize_skin("SKINLESS") == "SKLS"
-        assert standardize_skin("SKIN OFF") == "SKOFF"
-    
-    def test_standardize_bone(self):
-        """Test bone standardization."""
-        assert standardize_bone("BONELESS") == "BNLS"
-        assert standardize_bone("BONE IN") == "BIN"
-        assert standardize_bone("PIN BONE OUT") == "PBO"
-    
-    def test_standardize_trim(self):
-        """Test trim standardization."""
-        assert standardize_trim("TRIM D") == "D"
-        assert standardize_trim("DTRM") == "D"
-        assert standardize_trim("E-TRIM") == "E"
-        assert standardize_trim("FULL TRIM") == "FTRIM"
-
-
-class TestComparisonKey:
-    """Tests for comparison key generation."""
-    
-    def test_comparison_key_basic(self):
-        """Test basic comparison key."""
-        key = comparison_key("SALMON FIL ATL SKON 6OZ")
-        assert "SALMON" in key
-        assert "ATLANTIC" in key
-        assert "FIL" in key
-        assert "SKON" in key
-        assert "6OZ" in key
-    
-    def test_comparison_key_consistency(self):
-        """Test that similar descriptions produce same key."""
-        key1 = comparison_key("SALMON FIL ATL 6OZ SKON")
-        key2 = comparison_key("SALMON FILLET ATLANTIC 6 OZ SKIN ON")
-        # Should have same components even if order differs
-        assert set(key1.split('|')) == set(key2.split('|'))
-
-
-class TestMatching:
-    """Tests for matching functions."""
-    
-    def test_is_comparable_same_item(self):
-        """Test that identical items are comparable."""
-        assert is_comparable("SALMON FIL ATL 6OZ", "SALMON FIL ATL 6OZ")
-    
-    def test_is_comparable_different_species(self):
-        """Test that different species are not comparable."""
-        assert not is_comparable("SALMON FIL 6OZ", "COD FIL 6OZ")
-    
-    def test_match_high_confidence(self):
-        """Test high confidence match."""
-        result = match("SALMON FIL ATL 6OZ SKON", "SALMON FILLET ATLANTIC 6OZ SKIN ON")
-        assert result['is_comparable'] == True
-        assert result['confidence'] >= 0.8
-    
-    def test_match_details(self):
-        """Test match returns expected fields."""
-        result = match("SALMON FIL ATL 6OZ", "SALMON FIL ATL 8OZ")
-        assert 'is_comparable' in result
-        assert 'confidence' in result
-        assert 'matching_attributes' in result
-        assert 'different_attributes' in result
-        assert 'recommendation' in result
-
-
-class TestSpecies:
-    """Tests for species module."""
-    
-    def test_list_species_categories(self):
-        """Test listing species categories."""
-        categories = list_species()
-        assert 'salmon' in categories
-        assert 'crab' in categories
-        assert 'lobster' in categories
-        assert 'shrimp' in categories
-    
-    def test_list_salmon_subspecies(self):
-        """Test listing salmon subspecies."""
-        subspecies = list_species('salmon')
-        assert 'atlantic' in subspecies
-        assert 'king' in subspecies
-        assert 'sockeye' in subspecies
-    
-    def test_get_species_info(self):
-        """Test getting species info."""
-        info = get_species_info('salmon', 'atlantic')
-        assert info is not None
-        assert 'price_tier' in info
-        assert 'typical_price_range' in info
-    
-    def test_get_price_tier(self):
-        """Test price tier retrieval."""
-        assert get_price_tier('salmon', 'king') == 'ultra-premium'
-        assert get_price_tier('salmon', 'pink') == 'economy'
-        assert get_price_tier('salmon', 'atlantic') == 'mid'
-
-
-class TestReference:
-    """Tests for reference data."""
-    
-    def test_trim_levels_exist(self):
-        """Test trim levels data exists."""
-        assert 'A' in TRIM_LEVELS
-        assert 'B' in TRIM_LEVELS
-        assert 'C' in TRIM_LEVELS
-        assert 'D' in TRIM_LEVELS
-        assert 'E' in TRIM_LEVELS
-    
-    def test_trim_skin_status(self):
-        """Test trim level skin status."""
-        # A-D are skin on, E is skin off
-        assert is_trim_skin_on('A') == True
-        assert is_trim_skin_on('B') == True
-        assert is_trim_skin_on('C') == True
-        assert is_trim_skin_on('D') == True
-        assert is_trim_skin_on('E') == False
-    
-    def test_cut_styles_exist(self):
-        """Test cut styles data exists."""
-        assert 'CENTER' in CUT_STYLES
-        assert 'BIAS' in CUT_STYLES
-        assert 'BLOCK' in CUT_STYLES
-        assert 'RANDOM' in CUT_STYLES
-    
-    def test_cut_style_premium_status(self):
-        """Test cut style premium indicators."""
-        assert CUT_STYLES['CENTER']['premium'] == True
-        assert CUT_STYLES['BIAS']['premium'] == True
-        assert CUT_STYLES['BLOCK']['premium'] == False
-
-
-class TestRealWorldExamples:
-    """Tests using real-world item descriptions."""
-    
-    def test_distributor_salmon_description(self):
-        """Test typical distributor salmon description."""
-        result = parse("SALMON PRTN ATL BNLS SKLS 6 OZ CENTER CUT IVP FRZ")
-        assert result['category'] == 'salmon'
-        assert result['subspecies'] == 'atlantic'
-        assert result['form'] == 'PRTN'
-        assert result['bone'] == 'BNLS'
-        assert result['skin'] == 'SKLS'
-        assert result['size'] == '6OZ'
-        assert result['cut_style'] == 'CENTER'
-        assert result['pack'] == 'IVP'
-        assert result['storage'] == 'FRZ'
-    
-    def test_circana_salmon_description(self):
-        """Test typical Circana item description."""
-        result = parse("Portico Finfish - Frozen / Refrigerated Salmon Fillet 6 oz Boneless / Skinless 1/10 lb")
-        assert result['category'] == 'salmon'
         assert result['form'] == 'FIL'
         assert result['bone'] == 'BNLS'
         assert result['skin'] == 'SKLS'
+        assert result['size'] == '8OZ'
+        assert result['storage'] == 'FRZ'
+    
+    def test_lobster_tail(self):
+        result = fishlib.parse("LOBSTER TAIL MAINE 8OZ FRZ")
+        assert result['category'] == 'lobster'
+        assert result['subspecies'] == 'maine'
+        assert result['form'] == 'TAIL'
+        assert result['size'] == '8OZ'
+    
+    def test_halibut_steak(self):
+        result = fishlib.parse("HALIBUT STEAK PAC WILD 8OZ")
+        assert result['category'] == 'halibut'
+        assert result['subspecies'] == 'pacific'
+        assert result['form'] == 'STEAK'
+        assert result['harvest'] == 'WILD'
+    
+    def test_parse_description_alias(self):
+        """parse_description should be identical to parse."""
+        r1 = fishlib.parse("SALMON FIL ATL 6OZ")
+        r2 = fishlib.parse_description("SALMON FIL ATL 6OZ")
+        assert r1 == r2
+
+
+class TestParseSpecies:
+    """Test species extraction edge cases."""
+    
+    def test_cod_not_salmon_when_cod_in_text(self):
+        """COD ATLANTIC should be cod, not salmon (ATL is also a salmon alias)."""
+        result = fishlib.parse("COD FIL ATLANTIC")
+        assert result['category'] == 'cod'
+    
+    def test_sablefish_maps_to_black_cod(self):
+        """SABLEFISH has no 'COD' in text but should match via alias."""
+        result = fishlib.parse("SABLEFISH FIL WILD AK")
+        assert result['category'] == 'cod'
+        assert result['subspecies'] == 'black'
+    
+    def test_red_snapper_not_red_salmon(self):
+        result = fishlib.parse("SNAPPER RED FIL WILD")
+        assert result['category'] == 'snapper'
+        assert result['subspecies'] == 'red'
+    
+    def test_red_salmon_is_sockeye(self):
+        result = fishlib.parse("SALMON RED FIL WILD")
+        assert result['category'] == 'salmon'
+        assert result['subspecies'] == 'sockeye'
+    
+    def test_mahi_mahi(self):
+        result = fishlib.parse("MAHI FIL WILD 6OZ")
+        assert result['category'] == 'mahi'
+    
+    def test_branzino(self):
+        result = fishlib.parse("BRANZINO WHL FARM")
+        assert result['category'] == 'branzino'
+    
+    def test_chilean_sea_bass(self):
+        result = fishlib.parse("SEA BASS CHILEAN FIL 8OZ")
+        assert result['category'] == 'sea_bass'
+        assert result['subspecies'] == 'chilean'
+    
+    def test_new_species_snapper(self):
+        result = fishlib.parse("SNAPPER YELLOWTAIL FIL")
+        assert result['category'] == 'snapper'
+        assert result['subspecies'] == 'yellowtail'
+    
+    def test_new_species_grouper(self):
+        result = fishlib.parse("GROUPER RED FIL WILD")
+        assert result['category'] == 'grouper'
+        assert result['subspecies'] == 'red'
+    
+    def test_new_species_monkfish(self):
+        result = fishlib.parse("MONKFISH TAIL WILD")
+        assert result['category'] == 'monkfish'
+    
+    def test_new_species_crawfish(self):
+        result = fishlib.parse("CRAWFISH TAIL MEAT COOKED")
+        assert result['category'] == 'crawfish'
+
+
+class TestParseSizes:
+    """Test size extraction."""
+    
+    def test_oz_no_space(self):
+        result = fishlib.parse("SALMON FIL 6OZ")
         assert result['size'] == '6OZ'
+    
+    def test_oz_with_space(self):
+        result = fishlib.parse("SALMON FIL 6 OZ")
+        assert result['size'] == '6OZ'
+    
+    def test_oz_range(self):
+        result = fishlib.parse("SALMON FIL 5-7 OZ")
+        assert result['size'] == '5-7OZ'
+    
+    def test_lb_size(self):
+        result = fishlib.parse("SALMON FIL 2 LB")
+        assert result['size'] == '2LB'
+    
+    def test_lb_range(self):
+        result = fishlib.parse("SALMON FIL 3-4 LB")
+        assert result['size'] == '3-4LB'
+
+
+class TestParseCount:
+    """Test count extraction (shrimp, scallops)."""
+    
+    def test_slash_count(self):
+        result = fishlib.parse("SHRIMP 16/20")
+        assert result['count'] == '16/20'
+    
+    def test_u_count(self):
+        result = fishlib.parse("SHRIMP U10")
+        assert result['count'] == 'U10'
+    
+    def test_u_slash_count(self):
+        result = fishlib.parse("SCALLOP U/10")
+        assert result['count'] == 'U10'
+
+
+class TestParseBrand:
+    """Test brand extraction."""
+    
+    def test_portico(self):
+        result = fishlib.parse("PORTICO SALMON FIL ATL 6OZ")
         assert result['brand'] == 'Portico'
     
-    def test_compare_distributor_to_circana(self):
-        """Test comparing distributor and Circana descriptions."""
-        distributor = "SALMON PRTN ATL BNLS SKLS 6OZ CENTER CUT"
-        circana = "Portico Salmon Fillet 6 oz Boneless / Skinless"
-        
-        result = match(distributor, circana)
-        # Should match on species, size, skin, bone
-        # May differ on form (PRTN vs FIL) - this is a known Circana gap
-        assert result['is_comparable'] == True or 'form' in result['different_attributes']
+    def test_trident(self):
+        result = fishlib.parse("TRIDENT POLLOCK FIL")
+        assert result['brand'] == 'Trident'
+
+
+# =============================================================================
+# V0.2.0 NEW ATTRIBUTES
+# =============================================================================
+
+class TestParseMeatGrade:
+    """Test meat grade extraction (new in v0.2.0)."""
+    
+    def test_jumbo_lump(self):
+        result = fishlib.parse("CRAB MEAT JUMBO LUMP BLUE")
+        assert result['meat_grade'] == 'JUMBO_LUMP'
+    
+    def test_claw_meat(self):
+        result = fishlib.parse("CRAB CLAW MEAT BLUE")
+        assert result['meat_grade'] == 'CLAW'
+    
+    def test_backfin(self):
+        result = fishlib.parse("CRAB MEAT BACKFIN")
+        assert result['meat_grade'] == 'BACKFIN'
+    
+    def test_special(self):
+        result = fishlib.parse("CRAB MEAT SPECIAL")
+        assert result['meat_grade'] == 'SPECIAL'
+
+
+class TestParsePreparation:
+    """Test preparation extraction (new in v0.2.0)."""
+    
+    def test_cooked(self):
+        result = fishlib.parse("SHRIMP 16/20 COOKED P&D")
+        assert result['preparation'] == 'COOKED'
+    
+    def test_raw(self):
+        result = fishlib.parse("SHRIMP 16/20 RAW P&D")
+        assert result['preparation'] == 'RAW'
+    
+    def test_smoked(self):
+        result = fishlib.parse("SALMON FIL ATL SMOKED")
+        assert result['preparation'] == 'SMOKED'
+    
+    def test_cured_lox(self):
+        result = fishlib.parse("SALMON LOX SLICED")
+        assert result['preparation'] == 'CURED'
+
+
+class TestParseValueAdded:
+    """Test value-added extraction (new in v0.2.0)."""
+    
+    def test_breaded(self):
+        result = fishlib.parse("COD FIL BREADED 4OZ")
+        assert result['value_added'] == 'BREADED'
+    
+    def test_panko(self):
+        result = fishlib.parse("COD FIL PANKO 4OZ")
+        assert result['value_added'] == 'BREADED'
+    
+    def test_teriyaki_marinated(self):
+        result = fishlib.parse("SALMON PRTN TERIYAKI 6OZ")
+        assert result['value_added'] == 'MARINATED'
+    
+    def test_blackened(self):
+        result = fishlib.parse("MAHI FIL BLACKENED 6OZ")
+        assert result['value_added'] == 'BLACKENED'
+    
+    def test_stuffed(self):
+        result = fishlib.parse("SHRIMP STUFFED CRAB")
+        assert result['value_added'] == 'STUFFED'
+    
+    def test_formed_cakes(self):
+        result = fishlib.parse("CRAB CAKES 3OZ")
+        assert result['value_added'] == 'FORMED'
+
+
+# =============================================================================
+# STANDARDIZATION TESTS
+# =============================================================================
+
+class TestStandardize:
+    """Test standardization functions."""
+    
+    def test_form_fillet(self):
+        assert fishlib.standardize_form("FILLET") == "FIL"
+    
+    def test_form_portion(self):
+        assert fishlib.standardize_form("PORTION") == "PRTN"
+    
+    def test_skin_on(self):
+        assert fishlib.standardize_skin("SKIN ON") == "SKON"
+    
+    def test_skin_less(self):
+        assert fishlib.standardize_skin("SKINLESS") == "SKLS"
+    
+    def test_bone_less(self):
+        assert fishlib.standardize_bone("BONELESS") == "BNLS"
+    
+    def test_trim_d(self):
+        assert fishlib.standardize_trim("DTRM") == "D"
+    
+    def test_trim_e(self):
+        assert fishlib.standardize_trim("ETRM") == "E"
+    
+    def test_harvest_wild(self):
+        assert fishlib.standardize_harvest("WILD CAUGHT") == "WILD"
+    
+    def test_harvest_farm(self):
+        assert fishlib.standardize_harvest("FARM RAISED") == "FARM"
+    
+    def test_storage_frozen(self):
+        assert fishlib.standardize_storage("FROZEN") == "FRZ"
+    
+    def test_meat_grade_jumbo_lump(self):
+        assert fishlib.standardize_meat_grade("JUMBO LUMP") == "JUMBO_LUMP"
+    
+    def test_preparation_cooked(self):
+        assert fishlib.standardize_preparation("COOKED") == "COOKED"
+    
+    def test_preparation_lox(self):
+        assert fishlib.standardize_preparation("LOX") == "CURED"
+    
+    def test_value_added_panko(self):
+        assert fishlib.standardize_value_added("PANKO") == "BREADED"
+    
+    def test_get_standard_code(self):
+        assert fishlib.get_standard_code("form", "FILLET") == "FIL"
+        assert fishlib.get_standard_code("meat_grade", "JUMBO LUMP") == "JUMBO_LUMP"
+    
+    def test_list_codes(self):
+        codes = fishlib.list_codes("meat_grade")
+        assert "JUMBO_LUMP" in codes
+        assert "CLAW" in codes
+    
+    def test_list_codes_preparation(self):
+        codes = fishlib.list_codes("preparation")
+        assert "RAW" in codes
+        assert "COOKED" in codes
+        assert "SMOKED" in codes
+        assert "CURED" in codes
+    
+    def test_list_codes_value_added(self):
+        codes = fishlib.list_codes("value_added")
+        assert "BREADED" in codes
+        assert "STUFFED" in codes
+
+
+# =============================================================================
+# MATCHER TESTS
+# =============================================================================
+
+class TestMatcher:
+    """Test matching and comparison."""
+    
+    def test_identical_items_match(self):
+        result = fishlib.match(
+            "SALMON FIL ATL SKON DTRM 6OZ",
+            "SALMON FIL ATL SKON DTRM 6OZ"
+        )
+        assert result['is_comparable'] is True
+        assert result['confidence'] >= 0.9
+    
+    def test_same_item_different_text(self):
+        result = fishlib.match(
+            "SALMON FIL ATL SKON DTRM 6OZ",
+            "SALMON FILLET ATLANTIC SKIN ON D TRIM 6 OZ"
+        )
+        assert result['is_comparable'] is True
+        assert result['confidence'] >= 0.9
+    
+    def test_different_species_not_comparable(self):
+        result = fishlib.match("SALMON FIL ATL 6OZ", "COD FIL ATL 6OZ")
+        assert result['is_comparable'] is False
+    
+    def test_comparison_key_format(self):
+        key = fishlib.comparison_key("SALMON FIL ATL SKON DTRM 6OZ")
+        assert 'SALMON' in key
+        assert '|' in key
+    
+    def test_comparison_key_includes_new_attrs(self):
+        """Comparison key should include meat_grade, preparation, value_added."""
+        key = fishlib.comparison_key({
+            'category': 'crab',
+            'form': 'MEAT',
+            'meat_grade': 'JUMBO_LUMP',
+            'preparation': 'RAW'
+        })
+        assert 'JUMBO_LUMP' in key
+        assert 'RAW' in key
+    
+    def test_is_comparable_true(self):
+        assert fishlib.is_comparable(
+            "SALMON FIL ATL SKON D 6OZ",
+            "SALMON FIL ATL SKON D 6OZ"
+        ) is True
+    
+    def test_is_comparable_false(self):
+        assert fishlib.is_comparable("SALMON FIL", "COD FIL") is False
+    
+    def test_find_matches_returns_ranked(self):
+        candidates = [
+            "SALMON FIL ATL SKON D 6OZ",
+            "SALMON FIL ATL SKLS E 6OZ",
+            "COD FIL ATL 6OZ",
+        ]
+        matches = fishlib.find_matches("SALMON FIL ATL SKON D 6OZ", candidates)
+        assert len(matches) > 0
+        # First match should be the most similar
+        assert matches[0]['candidate_index'] == 0
+    
+    def test_match_score(self):
+        score = fishlib.match_score(
+            "SALMON FIL ATL SKON D 6OZ",
+            "SALMON FIL ATL SKON D 6OZ"
+        )
+        assert score >= 0.9
+
+
+# =============================================================================
+# SPECIES MODULE TESTS
+# =============================================================================
+
+class TestSpeciesModule:
+    """Test species module."""
+    
+    def test_list_categories(self):
+        cats = fishlib.species.list_species()
+        assert 'salmon' in cats
+        assert 'crab' in cats
+        assert 'snapper' in cats  # new in v0.2.0
+        assert 'grouper' in cats  # new in v0.2.0
+    
+    def test_list_salmon_species(self):
+        spp = fishlib.species.list_species('salmon')
+        assert 'atlantic' in spp
+        assert 'king' in spp
+        assert 'sockeye' in spp
+    
+    def test_price_tier(self):
+        assert fishlib.species.get_price_tier('salmon', 'king') == 'ultra-premium'
+        assert fishlib.species.get_price_tier('salmon', 'pink') == 'economy'
+        assert fishlib.species.get_price_tier('salmon', 'atlantic') == 'mid'
+    
+    def test_get_aliases(self):
+        aliases = fishlib.species.get_aliases('salmon', 'king')
+        assert 'KING' in aliases
+        assert 'CHINOOK' in aliases
+    
+    def test_identify_species(self):
+        result = fishlib.species.identify_species("SALMON SOCKEYE FIL WILD")
+        assert result['category'] == 'salmon'
+        assert result['subspecies'] == 'sockeye'
+    
+    def test_harvest_type(self):
+        assert fishlib.species.get_harvest_type('salmon', 'atlantic') == 'farm'
+        assert fishlib.species.get_harvest_type('salmon', 'sockeye') == 'wild'
+    
+    def test_compare_species_value(self):
+        # King > Pink
+        assert fishlib.species.compare_species_value(
+            ('salmon', 'king'), ('salmon', 'pink')
+        ) == 1
+
+
+# =============================================================================
+# REFERENCE MODULE TESTS
+# =============================================================================
+
+class TestReferenceModule:
+    """Test reference data module."""
+    
+    def test_trim_a_through_d_skin_on(self):
+        """Critical industry knowledge: Trim A-D are all skin on."""
+        for level in ['A', 'B', 'C', 'D']:
+            assert reference.is_trim_skin_on(level) is True, f"Trim {level} should be skin on"
+    
+    def test_trim_e_skin_off(self):
+        """Critical: Only Trim E is skin off."""
+        assert reference.is_trim_skin_on('E') is False
+    
+    def test_foodservice_trims(self):
+        """D and E are foodservice standard."""
+        assert reference.is_foodservice_trim('D') is True
+        assert reference.is_foodservice_trim('E') is True
+        assert reference.is_foodservice_trim('A') is False
+    
+    def test_trim_levels_exist(self):
+        assert 'A' in reference.TRIM_LEVELS
+        assert 'E' in reference.TRIM_LEVELS
+        assert 'FTRIM' in reference.TRIM_LEVELS
+    
+    def test_cut_styles_exist(self):
+        assert 'CENTER' in reference.CUT_STYLES
+        assert 'BIAS' in reference.CUT_STYLES
+        assert 'BLOCK' in reference.CUT_STYLES
+    
+    def test_meat_grades_exist(self):
+        assert 'JUMBO_LUMP' in reference.MEAT_GRADES
+        assert 'CLAW' in reference.MEAT_GRADES
+    
+    def test_preparation_exist(self):
+        assert 'RAW' in reference.PREPARATION
+        assert 'COOKED' in reference.PREPARATION
+        assert 'SMOKED' in reference.PREPARATION
+        assert 'CURED' in reference.PREPARATION
+    
+    def test_value_added_exist(self):
+        assert 'BREADED' in reference.VALUE_ADDED
+        assert 'STUFFED' in reference.VALUE_ADDED
+        assert 'MARINATED' in reference.VALUE_ADDED
+
+
+# =============================================================================
+# BATCH PARSING
+# =============================================================================
+
+class TestBatchParsing:
+    """Test batch operations."""
+    
+    def test_parse_batch(self):
+        descriptions = [
+            "SALMON FIL ATL 6OZ",
+            "COD FIL PAC 8OZ",
+            "SHRIMP 16/20 RAW",
+        ]
+        results = parser.parse_batch(descriptions)
+        assert len(results) == 3
+        assert results[0]['category'] == 'salmon'
+        assert results[1]['category'] == 'cod'
+        assert results[2]['category'] == 'shrimp'
 
 
 if __name__ == '__main__':

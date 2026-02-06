@@ -33,7 +33,7 @@ setup(
     ],
     python_requires=">=3.8",
     install_requires=[
-        "pandas>=1.0.0",
+        # No dependencies - fishlib is lightweight by design
     ],
     extras_require={
         "dev": [

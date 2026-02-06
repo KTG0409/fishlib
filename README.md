@@ -1,10 +1,10 @@
-# fishlib 🐟
+# fishlib ðŸŸ
 
 A Python library for parsing, standardizing, and comparing seafood product descriptions in the food industry.
 
 **The Problem:** Seafood product descriptions are messy. The same product can be described a hundred different ways. Comparing prices across distributors, suppliers, or market data requires deep domain knowledge to know if two items are actually comparable.
 
-**The Solution:** `fishlib` parses item descriptions into structured attributes, standardizes them to common codes, and enables apples-to-apples comparisons—so you don't need to be a fish expert to work with seafood data.
+**The Solution:** `fishlib` parses item descriptions into structured attributes, standardizes them to common codes, and enables apples-to-apples comparisonsâ€”so you don't need to be a fish expert to work with seafood data.
 
 ## Installation
 
@@ -167,7 +167,7 @@ In food distribution, comparing prices requires knowing if products are truly co
 - Center-cut bias portion (premium)
 - Block-cut with tail pieces (commodity)
 
-Without the right attributes, price comparisons are meaningless. `fishlib` encodes the domain knowledge needed to make accurate comparisons—so you don't need 20 years of fish experience to work with seafood data.
+Without the right attributes, price comparisons are meaningless. `fishlib` encodes the domain knowledge needed to make accurate comparisonsâ€”so you don't need 20 years of fish experience to work with seafood data.
 
 ## Changelog
 

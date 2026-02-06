@@ -77,6 +77,10 @@ def comparison_key(item: Any) -> str:
     if item.get('value_added'):
         components.append(item['value_added'])
     
+    # Shrimp form (P&D, SHELL_ON, TAIL_ON, etc.)
+    if item.get('shrimp_form'):
+        components.append(item['shrimp_form'])
+    
     return '|'.join(components)
 
 
@@ -120,11 +124,15 @@ def match(item1: Any, item2: Any) -> Dict[str, Any]:
     key2 = comparison_key(item2)
     
     # Compare attributes
-    COMPARE_ATTRS = ['category', 'subspecies', 'form', 'skin', 'bone', 'trim', 'size', 'count', 'harvest', 'cut_style', 'meat_grade', 'preparation', 'value_added']
+    COMPARE_ATTRS = ['category', 'subspecies', 'form', 'skin', 'bone', 'trim', 'size', 'count', 'harvest', 'cut_style', 'meat_grade', 'preparation', 'value_added', 'shrimp_form']
     
     matching = []
     different = []
     missing = []
+    
+    # Attributes where having one but not the other means a real difference,
+    # not just missing data. Breaded vs no-breading = different product.
+    DIFFERENCE_WHEN_ONESIDED = {'preparation', 'value_added', 'meat_grade', 'shrimp_form'}
     
     for attr in COMPARE_ATTRS:
         val1 = item1.get(attr)
@@ -133,7 +141,12 @@ def match(item1: Any, item2: Any) -> Dict[str, Any]:
         if val1 is None and val2 is None:
             continue
         elif val1 is None or val2 is None:
-            missing.append(attr)
+            if attr in DIFFERENCE_WHEN_ONESIDED:
+                # One item has this attribute and the other doesn't -
+                # treat as a real difference (e.g., breaded vs plain)
+                different.append(attr)
+            else:
+                missing.append(attr)
         elif str(val1).upper() == str(val2).upper():
             matching.append(attr)
         else:
@@ -148,10 +161,15 @@ def match(item1: Any, item2: Any) -> Dict[str, Any]:
     
     # Determine if comparable
     # Must match on species/category at minimum
+    # Preparation, value_added, and meat_grade differences make items NOT comparable
+    # (raw vs cooked = 20-30% price diff, breaded vs plain = different product entirely)
     is_comparable = (
         'category' in matching and
         'subspecies' not in different and
         'form' not in different and
+        'preparation' not in different and
+        'value_added' not in different and
+        'meat_grade' not in different and
         match_score >= 0.5
     )
     
@@ -270,6 +288,7 @@ def calculate_confidence(matching: List[str], different: List[str], missing: Lis
         'meat_grade': 2.5,    # Critical for crab - jumbo lump vs claw is huge
         'preparation': 2.0,   # Raw vs cooked is a major price differentiator
         'value_added': 2.0,   # Breaded vs plain is a different product entirely
+        'shrimp_form': 1.5,   # P&D vs shell-on matters for pricing
     }
     
     score = 0
@@ -311,6 +330,12 @@ def _generate_recommendation(matching: List[str], different: List[str], missing:
             return "NOT COMPARABLE - Different species"
         elif 'form' in different:
             return "NOT COMPARABLE - Different form (e.g., fillet vs portion)"
+        elif 'preparation' in different:
+            return "NOT COMPARABLE - Different preparation (e.g., raw vs cooked)"
+        elif 'value_added' in different:
+            return "NOT COMPARABLE - Different processing (e.g., breaded vs plain)"
+        elif 'meat_grade' in different:
+            return "NOT COMPARABLE - Different meat grade (e.g., jumbo lump vs claw)"
         else:
             return "NOT COMPARABLE - Too many attribute differences"
     

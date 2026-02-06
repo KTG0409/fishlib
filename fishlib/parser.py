@@ -86,7 +86,8 @@ def parse(description: str) -> Dict[str, Any]:
         'count': None,
         'meat_grade': None,
         'preparation': None,
-        'value_added': None
+        'value_added': None,
+        'shrimp_form': None
     }
     
     # Normalize text
@@ -98,7 +99,10 @@ def parse(description: str) -> Dict[str, Any]:
         result.update(species_info)
     
     # Extract form
-    result['form'] = _extract_attribute(text, 'form')
+    result['form'] = _extract_form(text)
+    
+    # Extract shrimp-specific form (P&D, PUD, SHELL_ON, EZ PEEL, etc.)
+    result['shrimp_form'] = _extract_shrimp_form(text)
     
     # Extract skin status
     result['skin'] = _extract_attribute(text, 'skin')
@@ -232,6 +236,70 @@ def _extract_species(text: str) -> Optional[Dict[str, Any]]:
         return best
     
     return None
+
+
+def _extract_form(text: str) -> Optional[str]:
+    """
+    Extract form, with special handling for TAIL ON / TAIL OFF.
+    
+    'TAIL ON' and 'TAIL OFF' are shrimp processing descriptors, NOT form=TAIL.
+    Only match TAIL as a form when it's not followed by ON/OFF.
+    """
+    text_upper = text.upper()
+    
+    if 'form' not in STANDARD_CODES:
+        return None
+    
+    matches = []
+    for code, info in STANDARD_CODES['form'].items():
+        for alias in info.get('aliases', []):
+            pattern = r'(?:^|[\s/\-_,])' + re.escape(alias) + r'(?:$|[\s/\-_,])'
+            if re.search(pattern, text_upper) or text_upper == alias:
+                # Special case: TAIL should not match when followed by ON or OFF
+                if code == 'TAIL':
+                    tail_on_off = re.search(r'(?:^|[\s/\-_,])TAIL\s*(?:ON|OFF)(?:$|[\s/\-_,])', text_upper)
+                    if tail_on_off:
+                        continue  # Skip - this is "TAIL ON/OFF", not form=TAIL
+                matches.append((len(alias), code, alias))
+    
+    if matches:
+        matches.sort(reverse=True, key=lambda x: x[0])
+        return matches[0][1]
+    
+    return None
+
+
+def _extract_shrimp_form(text: str) -> Optional[str]:
+    """
+    Extract shrimp-specific processing form (P&D, PUD, SHELL ON, EZ PEEL, TAIL ON/OFF).
+    
+    These are critical for shrimp pricing but don't map to the standard 'form' codes.
+    """
+    text_upper = text.upper()
+    
+    SHRIMP_FORMS = {
+        'P&D': [r'P\s*&\s*D', r'P/D', r'PD', r'PEELED\s+(?:&\s+)?DEVEINED'],
+        'PUD': [r'PUD', r'P/UD', r'PEELED\s+UNDEVEINED'],
+        'SHELL_ON': [r'SHELL\s*ON', r'SHL\s*ON', r'S/ON', r'HEAD\s*OFF\s*SHELL\s*ON', r'HOSO'],
+        'TAIL_ON': [r'TAIL\s*ON', r'T/ON', r'EZ\s*PEEL', r'EZPEEL'],
+        'TAIL_OFF': [r'TAIL\s*OFF', r'T/OFF', r'TAILLESS'],
+        'HEAD_ON': [r'HEAD\s*ON', r'H/ON', r'HOON'],
+    }
+    
+    best_match = None
+    best_len = 0
+    
+    for code, patterns in SHRIMP_FORMS.items():
+        for pat in patterns:
+            full_pattern = r'(?:^|[\s/\-_,])(' + pat + r')(?:$|[\s/\-_,])'
+            m = re.search(full_pattern, text_upper)
+            if m:
+                match_len = len(m.group(1))
+                if match_len > best_len:
+                    best_len = match_len
+                    best_match = code
+    
+    return best_match
 
 
 def _extract_attribute(text: str, category: str) -> Optional[str]:
@@ -384,5 +452,6 @@ def extract_key_attributes(description: str) -> Dict[str, str]:
         'trim': result.get('trim'),
         'meat_grade': result.get('meat_grade'),
         'preparation': result.get('preparation'),
-        'value_added': result.get('value_added')
+        'value_added': result.get('value_added'),
+        'shrimp_form': result.get('shrimp_form')
     }

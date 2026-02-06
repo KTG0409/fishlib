@@ -1,4 +1,6 @@
+CHANGELOG.md
 LICENSE
+MANIFEST.in
 README.md
 setup.py
 fishlib/__init__.py
