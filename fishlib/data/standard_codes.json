@@ -114,7 +114,8 @@
             "aliases": [
                 "CLUSTER",
                 "CLSTR",
-                "CLST"
+                "CLST",
+                "CLUSTERS"
             ]
         },
         "LEG": {
@@ -148,6 +149,12 @@
                 "TENTACLE",
                 "TENT",
                 "TENTACLES"
+            ]
+        },
+        "PASTE": {
+            "name": "Paste",
+            "aliases": [
+                "PASTE"
             ]
         }
     },
@@ -260,7 +267,10 @@
                 "D TRIM",
                 "D-TRIM",
                 "DTRM",
-                "D-TRM"
+                "D-TRM",
+                "DTRIM",
+                "D/TRIM",
+                "D/TRM"
             ]
         },
         "E": {
@@ -272,7 +282,10 @@
                 "E TRIM",
                 "E-TRIM",
                 "ETRM",
-                "E-TRM"
+                "E-TRM",
+                "ETRIM",
+                "E/TRIM",
+                "E/TRM"
             ]
         },
         "FTRIM": {
@@ -387,7 +400,11 @@
                 "BIAS",
                 "BIAS CUT",
                 "ANGLE",
-                "ANGLED"
+                "ANGLED",
+                "XTBIAS",
+                "XT BIAS",
+                "EXTRA BIAS",
+                "XBIAS"
             ]
         },
         "BLOCK": {
@@ -406,6 +423,14 @@
                 "IRREGULAR",
                 "MISC",
                 "MIXED"
+            ]
+        },
+        "SAKU": {
+            "name": "Saku Block",
+            "aliases": [
+                "SAKU",
+                "SAKU BLOCK",
+                "SAKU CUT"
             ]
         }
     },
@@ -758,7 +783,11 @@
                 "CKD",
                 "PRECOOKED",
                 "PRE-COOKED",
-                "FULLY COOKED"
+                "FULLY COOKED",
+                "PRCKD",
+                "PRE COOKED",
+                "PRE CKD",
+                "PRECKD"
             ]
         },
         "SMOKED": {
@@ -768,7 +797,9 @@
                 "SMK",
                 "COLD SMOKED",
                 "HOT SMOKED",
-                "KIPPERED"
+                "KIPPERED",
+                "SMKD",
+                "SMOKD"
             ]
         },
         "CURED": {
@@ -793,7 +824,13 @@
                 "ENCRUSTED",
                 "BEER BATTERED",
                 "BATTERED",
-                "TEMPURA"
+                "TEMPURA",
+                "CRISPANKO",
+                "CRISP PANKO",
+                "POPCORN",
+                "POPCRN",
+                "PUB STYLE",
+                "PUB STY"
             ]
         },
         "STUFFED": {

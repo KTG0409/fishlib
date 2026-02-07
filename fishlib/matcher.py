@@ -130,10 +130,6 @@ def match(item1: Any, item2: Any) -> Dict[str, Any]:
     different = []
     missing = []
     
-    # Attributes where having one but not the other means a real difference,
-    # not just missing data. Breaded vs no-breading = different product.
-    DIFFERENCE_WHEN_ONESIDED = {'preparation', 'value_added', 'meat_grade', 'shrimp_form'}
-    
     for attr in COMPARE_ATTRS:
         val1 = item1.get(attr)
         val2 = item2.get(attr)
@@ -141,28 +137,30 @@ def match(item1: Any, item2: Any) -> Dict[str, Any]:
         if val1 is None and val2 is None:
             continue
         elif val1 is None or val2 is None:
-            if attr in DIFFERENCE_WHEN_ONESIDED:
-                # One item has this attribute and the other doesn't -
-                # treat as a real difference (e.g., breaded vs plain)
-                different.append(attr)
-            else:
-                missing.append(attr)
+            missing.append(attr)
         elif str(val1).upper() == str(val2).upper():
             matching.append(attr)
         else:
             different.append(attr)
     
+    # For preparation, value_added, meat_grade, shrimp_form:
+    # if one item has it and the other doesn't, treat as different (not missing)
+    CRITICAL_ATTRS = ['preparation', 'value_added', 'meat_grade', 'shrimp_form']
+    for attr in CRITICAL_ATTRS:
+        if attr in missing:
+            missing.remove(attr)
+            different.append(attr)
+    
     # Calculate scores
     total_attrs = len(matching) + len(different)
-    match_score = len(matching) / total_attrs if total_attrs > 0 else 0
+    match_score_val = len(matching) / total_attrs if total_attrs > 0 else 0
     
     # Confidence score (penalize missing attributes less than differences)
     confidence = calculate_confidence(matching, different, missing)
     
     # Determine if comparable
     # Must match on species/category at minimum
-    # Preparation, value_added, and meat_grade differences make items NOT comparable
-    # (raw vs cooked = 20-30% price diff, breaded vs plain = different product entirely)
+    # Preparation, value_added, meat_grade differences make items NOT comparable
     is_comparable = (
         'category' in matching and
         'subspecies' not in different and
@@ -170,7 +168,8 @@ def match(item1: Any, item2: Any) -> Dict[str, Any]:
         'preparation' not in different and
         'value_added' not in different and
         'meat_grade' not in different and
-        match_score >= 0.5
+        'shrimp_form' not in different and
+        match_score_val >= 0.5
     )
     
     # Generate recommendation
@@ -179,7 +178,7 @@ def match(item1: Any, item2: Any) -> Dict[str, Any]:
     return {
         'is_comparable': is_comparable,
         'confidence': round(confidence, 2),
-        'match_score': round(match_score, 2),
+        'match_score': round(match_score_val, 2),
         'matching_attributes': matching,
         'different_attributes': different,
         'missing_attributes': missing,
@@ -330,12 +329,6 @@ def _generate_recommendation(matching: List[str], different: List[str], missing:
             return "NOT COMPARABLE - Different species"
         elif 'form' in different:
             return "NOT COMPARABLE - Different form (e.g., fillet vs portion)"
-        elif 'preparation' in different:
-            return "NOT COMPARABLE - Different preparation (e.g., raw vs cooked)"
-        elif 'value_added' in different:
-            return "NOT COMPARABLE - Different processing (e.g., breaded vs plain)"
-        elif 'meat_grade' in different:
-            return "NOT COMPARABLE - Different meat grade (e.g., jumbo lump vs claw)"
         else:
             return "NOT COMPARABLE - Too many attribute differences"
     
