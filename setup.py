@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="fishlib",
-    version="0.3.0",
+    version="0.3.1",
     author="Karen Morton",
     author_email="kmorton319@gmail.com",
     description="A Python library for parsing, standardizing, and comparing seafood product descriptions in foodservice",

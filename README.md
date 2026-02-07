@@ -1,4 +1,4 @@
-# fishlib ðŸŸ
+# fishlib 🐟
 
 A Python library for parsing, standardizing, and comparing seafood product descriptions in the food industry.
 
