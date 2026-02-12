@@ -118,6 +118,7 @@ def parse(description: str) -> Dict[str, Any]:
         'bone': None,
         'trim': None,
         'size': None,
+        'size_bucket': None,
         'pack': None,
         'storage': None,
         'harvest': None,
@@ -155,6 +156,9 @@ def parse(description: str) -> Dict[str, Any]:
     
     # Extract size
     result['size'] = _extract_size(text)
+    
+    # Assign size bucket for comparison matching
+    result['size_bucket'] = _assign_size_bucket(result['size'])
     
     # Extract packaging
     result['pack'] = _extract_attribute(text, 'pack')
@@ -533,6 +537,97 @@ def _extract_size(text: str) -> Optional[str]:
                 return f"{match.group(1)}-{match.group(2)}LB"
             else:
                 return f"{match.group(1)}LB"
+    
+    return None
+
+
+# =========================================================================
+# SIZE BUCKET ASSIGNMENT
+# =========================================================================
+
+# Ounce buckets: lower bound is INCLUSIVE
+# A 2oz portion competes with 2-3oz, not 1-2oz
+OZ_BUCKETS = [
+    (1, 2, '1-2OZ'),
+    (2, 3, '2-3OZ'),
+    (3, 4, '3-4OZ'),
+    (4, 5, '4-5OZ'),
+    (5, 6, '5-6OZ'),
+    (6, 8, '6-8OZ'),
+    (8, 10, '8-10OZ'),
+    (10, 12, '10-12OZ'),
+    (12, 16, '12-16OZ'),
+    (16, 999, '16OZ+'),
+]
+
+# Pound buckets
+LB_BUCKETS = [
+    (0, 1, 'UNDER-1LB'),
+    (1, 2, '1-2LB'),
+    (2, 3, '2-3LB'),
+    (3, 4, '3-4LB'),
+    (4, 5, '4-5LB'),
+    (5, 7, '5-7LB'),
+    (7, 9, '7-9LB'),
+    (9, 999, '9LB+'),
+]
+
+
+def _assign_size_bucket(size_str: Optional[str]) -> Optional[str]:
+    """
+    Assign a standardized size bucket for comparison matching.
+    
+    Converts exact sizes and ranges into standard competitive buckets
+    so that "2OZ" and "2-3OZ" land in the same bucket.
+    
+    For ranges (e.g., "2-3OZ"), uses the midpoint to assign the bucket.
+    For exact sizes (e.g., "8OZ"), uses the value directly.
+    
+    Args:
+        size_str: Standardized size string from _extract_size (e.g., "6OZ", "2-3OZ", "3-4LB")
+        
+    Returns:
+        Bucket string (e.g., "6-8OZ", "2-3OZ", "3-4LB") or None
+        
+    Examples:
+        "2OZ"    → "2-3OZ"
+        "2-3OZ"  → "2-3OZ"
+        "8OZ"    → "8-10OZ"
+        "5-7OZ"  → "6-8OZ"  (midpoint=6)
+        "3-4LB"  → "3-4LB"
+        "3LB"    → "3-4LB"
+    """
+    if not size_str:
+        return None
+    
+    size_upper = size_str.upper().strip()
+    
+    # Determine unit and extract numeric value(s)
+    if 'OZ' in size_upper:
+        buckets = OZ_BUCKETS
+        num_str = size_upper.replace('OZ', '').strip()
+    elif 'LB' in size_upper:
+        buckets = LB_BUCKETS
+        num_str = size_upper.replace('LB', '').strip()
+    else:
+        return None
+    
+    # Parse value: range (e.g., "2-3") or exact (e.g., "8")
+    try:
+        if '-' in num_str:
+            parts = num_str.split('-')
+            low = float(parts[0])
+            high = float(parts[1])
+            value = (low + high) / 2  # midpoint
+        else:
+            value = float(num_str)
+    except (ValueError, IndexError):
+        return None
+    
+    # Find matching bucket (lower bound inclusive)
+    for lower, upper, label in buckets:
+        if lower <= value < upper:
+            return label
     
     return None
 

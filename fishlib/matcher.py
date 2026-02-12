@@ -63,9 +63,9 @@ def comparison_key(item: Any) -> str:
     if item.get('trim'):
         components.append(item['trim'])
     
-    # Size
-    if item.get('size'):
-        components.append(item['size'])
+    # Size bucket (for matching — uses bucket, not exact size)
+    if item.get('size_bucket'):
+        components.append(item['size_bucket'])
     
     # Count (for shrimp/scallops)
     if item.get('count'):
@@ -130,10 +130,10 @@ def match(item1: Any, item2: Any) -> Dict[str, Any]:
     key1 = comparison_key(item1)
     key2 = comparison_key(item2)
     
-    # Compare attributes (freeze_cycle added in v0.4.0)
+    # Compare attributes (size_bucket used instead of raw size for matching)
     COMPARE_ATTRS = [
         'category', 'subspecies', 'form', 'skin', 'bone', 'trim',
-        'size', 'count', 'harvest', 'cut_style', 'meat_grade',
+        'size_bucket', 'count', 'harvest', 'cut_style', 'meat_grade',
         'preparation', 'value_added', 'freeze_cycle',
     ]
     
@@ -273,7 +273,7 @@ def calculate_confidence(matching: List[str], different: List[str], missing: Lis
         'skin': 1.5,           # Important for salmon
         'bone': 1.0,           # Moderate importance
         'trim': 1.5,           # Important for salmon fillets
-        'size': 2.0,           # Important for portions
+        'size_bucket': 2.0,    # Important for portions
         'count': 2.0,          # Important for shrimp/scallops
         'harvest': 1.5,        # Wild vs farm matters
         'cut_style': 1.5,      # Center cut vs block matters
