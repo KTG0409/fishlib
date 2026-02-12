@@ -50,18 +50,21 @@ different jobs:
 
 On your Windows machine:
 
-1. Navigate to: `C:\Users\kmort\OneDrive\Documents\libraries\`
+1. Navigate to: `C:\Users\kmor6669\Analysis\Code\fishlib 0.2.0\`
 2. **Rename** your current `fishlib-main` folder to `fishlib-main-backup` (just in case)
 3. **Copy** this entire `fishlib-main` folder there
 
-Your old `.tar.gz` build file may still be in a `dist/` subfolder — that's fine, we'll clean it out and create new build files in the next steps.
+Your old `.tar.gz` build file should still be at:
+`C:\Users\kmor6669\Analysis\Code\fishlib 0.2.0\fishlib-main\dist\fishlib-0.1.0.tar.gz`
+
+That's fine — we'll create new build files in the next steps.
 
 ---
 
 ## Step 2: Open WSL and navigate to your project
 
 ```bash
-cd "/mnt/c/Users/kmort/OneDrive/Documents/libraries/fishlib-main"
+cd "/mnt/c/Users/kmor6669/Analysis/Code/fishlib 0.2.0/fishlib-main"
 ```
 
 Verify you're in the right place:
@@ -181,7 +184,7 @@ Should print: `0.2.0`
 ## Step 10: Push to GitHub
 
 ```bash
-cd "/mnt/c/Users/kmort/OneDrive/Documents/libraries/fishlib-main"
+cd "/mnt/c/Users/kmor6669/Analysis/Code/fishlib 0.2.0/fishlib-main"
 
 # Stage all changes
 git add -A

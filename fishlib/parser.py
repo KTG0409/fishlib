@@ -3,6 +3,12 @@ Parser module for fishlib.
 
 Parses seafood item descriptions into structured attribute dictionaries.
 Handles messy, inconsistent text from various data sources.
+
+v0.4.0 changes:
+  - Split 'origin' into 'origin_harvest' and 'origin_processed'
+  - New 'freeze_cycle' attribute (SINGLE or TWICE) inferred from
+    processing country + species category
+  - Backward-compatible: 'origin' still populated for legacy use
 """
 
 import re
@@ -20,16 +26,83 @@ with open(os.path.join(_DATA_DIR, 'species_aliases.json'), 'r') as f:
     SPECIES_DATA = json.load(f)
 
 
+# ---------------------------------------------------------------------------
+# Twice-frozen inference constants
+# ---------------------------------------------------------------------------
+
+# Asian processing countries where finfish is typically twice-frozen:
+# Caught/farmed elsewhere → frozen → shipped to Asia → thawed → processed → refrozen
+TWICE_FROZEN_PROCESSING_COUNTRIES = {
+    'CHN', 'VNM', 'THA', 'IDN', 'IND', 'BGD', 'MMR', 'PHL',
+}
+
+# Species categories that are FINFISH (twice-frozen logic applies)
+# Crustaceans, cephalopods, and mollusks are exempt
+FINFISH_CATEGORIES = {
+    'salmon', 'cod', 'pollock', 'haddock', 'halibut', 'flounder', 'sole',
+    'tilapia', 'swai', 'catfish', 'tuna', 'mahi', 'swordfish', 'snapper',
+    'grouper', 'branzino', 'sea_bass', 'trout', 'barramundi', 'wahoo',
+    'monkfish', 'anchovy', 'whiting', 'perch', 'sardine', 'herring',
+    'mackerel', 'hake', 'orange_roughy', 'corvina', 'cobia', 'hamachi',
+    'pike',
+}
+
+# Categories EXEMPT from twice-frozen logic
+# (crustaceans and cephalopods handle freezing differently)
+EXEMPT_CATEGORIES = {
+    'shrimp', 'crab', 'lobster', 'crawfish', 'scallop', 'clam',
+    'oyster', 'mussel', 'calamari', 'octopus', 'langostino', 'conch',
+}
+
+
 def parse(description: str) -> Dict[str, Any]:
     """
     Parse a seafood item description into structured attributes.
     
+    This is the main entry point for parsing. It handles messy text from
+    various sources (distributors, Circana, suppliers) and extracts standardized
+    attributes.
+    
     Args:
         description: The item description to parse
-                    e.g., "SALMON FIL ATL SKON DTRM 6OZ IVP"
+                    e.g., "POLLOCK FIL WILD ALASKA PROC CHINA 6OZ IVP"
                     
     Returns:
-        Dictionary with extracted attributes.
+        Dictionary with extracted attributes:
+        {
+            'raw': original description,
+            'species': detected species name,
+            'species_code': standardized species code,
+            'category': species category (e.g., 'salmon', 'crab'),
+            'subspecies': specific type (e.g., 'atlantic', 'king'),
+            'form': form code (FIL, PRTN, LOIN, etc.),
+            'skin': skin status (SKON, SKLS, SKOFF),
+            'bone': bone status (BNLS, BIN, PBO),
+            'trim': trim level (A, B, C, D, E, FTRIM),
+            'size': size specification (6OZ, 5-7OZ, etc.),
+            'pack': packaging (IVP, IQF, etc.),
+            'storage': storage type (FRZ, FRSH, RFRSH),
+            'harvest': harvest type (WILD, FARM),
+            'origin': country of origin code (legacy, first detected),
+            'origin_harvest': where fish was caught/farmed,
+            'origin_processed': where fish was cut/portioned,
+            'freeze_cycle': SINGLE or TWICE (finfish only),
+            'cut_style': cut style (CENTER, BIAS, BLOCK),
+            'brand': detected brand name,
+            'count': count size for shrimp/scallops,
+            'meat_grade': crab/lobster meat grade,
+            'preparation': raw/cooked/smoked/cured,
+            'value_added': breaded/stuffed/marinated/etc.
+        }
+        
+    Example:
+        >>> item = parse("POLLOCK FIL WILD ALASKA PROCESSED IN CHINA 6OZ")
+        >>> print(item['origin_harvest'])
+        'USA'
+        >>> print(item['origin_processed'])
+        'CHN'
+        >>> print(item['freeze_cycle'])
+        'TWICE'
     """
     if not description:
         return {'raw': '', 'error': 'Empty description'}
@@ -49,131 +122,279 @@ def parse(description: str) -> Dict[str, Any]:
         'storage': None,
         'harvest': None,
         'origin': None,
+        'origin_harvest': None,
+        'origin_processed': None,
+        'freeze_cycle': None,
         'cut_style': None,
         'brand': None,
         'count': None,
         'meat_grade': None,
         'preparation': None,
-        'value_added': None,
-        'shrimp_form': None
+        'value_added': None
     }
     
     # Normalize text
     text = description.upper().strip()
-    
-    # Pre-process: split common smashed-together codes
-    expanded = _expand_smashed_codes(text)
     
     # Extract species
     species_info = _extract_species(text)
     if species_info:
         result.update(species_info)
     
-    # Extract form (with TAIL ON/OFF protection)
-    result['form'] = _extract_form(expanded)
-    
-    # Extract shrimp-specific form (P&D, PUD, SHELL ON, EZ PEEL, etc.)
-    result['shrimp_form'] = _extract_shrimp_form(expanded)
+    # Extract form
+    result['form'] = _extract_attribute(text, 'form')
     
     # Extract skin status
-    result['skin'] = _extract_attribute(expanded, 'skin')
+    result['skin'] = _extract_attribute(text, 'skin')
     
     # Extract bone status
-    result['bone'] = _extract_attribute(expanded, 'bone')
+    result['bone'] = _extract_attribute(text, 'bone')
     
     # Extract trim level
-    result['trim'] = _extract_attribute(expanded, 'trim')
+    result['trim'] = _extract_attribute(text, 'trim')
     
     # Extract size
     result['size'] = _extract_size(text)
     
     # Extract packaging
-    result['pack'] = _extract_attribute(expanded, 'pack')
+    result['pack'] = _extract_attribute(text, 'pack')
     
     # Extract storage
-    result['storage'] = _extract_attribute(expanded, 'storage')
+    result['storage'] = _extract_attribute(text, 'storage')
     
     # Extract harvest type
-    result['harvest'] = _extract_attribute(expanded, 'harvest')
+    result['harvest'] = _extract_attribute(text, 'harvest')
     
-    # Extract origin
-    result['origin'] = _extract_attribute(expanded, 'origin_country')
+    # Extract origin (harvest + processing)
+    origins = _extract_origins(text)
+    result['origin_harvest'] = origins.get('harvest')
+    result['origin_processed'] = origins.get('processed')
+    # Legacy 'origin' field: harvest country if available, else first detected
+    result['origin'] = result['origin_harvest'] or result['origin_processed']
     
     # Extract cut style
-    result['cut_style'] = _extract_attribute(expanded, 'cut_style')
+    result['cut_style'] = _extract_attribute(text, 'cut_style')
     
     # Extract count (for shrimp, scallops)
     result['count'] = _extract_count(text)
     
-    # Extract brand
+    # Extract brand (common brands)
     result['brand'] = _extract_brand(text)
     
-    # Extract meat grade (with LUMPFISH protection)
-    result['meat_grade'] = _extract_meat_grade(expanded, text)
+    # Extract meat grade (crab, lobster)
+    result['meat_grade'] = _extract_attribute(text, 'meat_grade')
     
     # Extract preparation (raw, cooked, smoked, cured)
-    result['preparation'] = _extract_attribute(expanded, 'preparation')
+    result['preparation'] = _extract_attribute(text, 'preparation')
     
     # Extract value-added (breaded, stuffed, marinated, etc.)
-    result['value_added'] = _extract_attribute(expanded, 'value_added')
+    result['value_added'] = _extract_attribute(text, 'value_added')
+    
+    # Infer freeze cycle from processing country + category
+    result['freeze_cycle'] = _infer_freeze_cycle(
+        category=result.get('category'),
+        origin_harvest=result.get('origin_harvest'),
+        origin_processed=result.get('origin_processed'),
+        storage=result.get('storage'),
+    )
     
     return result
 
 
 def parse_description(description: str) -> Dict[str, Any]:
-    """Alias for parse() - for compatibility."""
+    """
+    Alias for parse() - for compatibility with different naming conventions.
+    """
     return parse(description)
 
 
-def _expand_smashed_codes(text: str) -> str:
-    """
-    Expand common smashed-together abbreviations found in real data.
-    
-    Examples:
-        '4-5LBSKONCAN' -> '4-5LB SKON CAN'
-        'BNLSKL'       -> 'BNLS SKL'
-        'BNLSSKLS'     -> 'BNLS SKLS'
-        'SKLSBNLS'     -> 'SKLS BNLS'
-        'CKD100/150'   -> 'CKD 100/150'
-    """
-    t = text
-    
-    # Size units smashed to skin codes (4-5LBSKON -> 4-5LB SKON)
-    t = re.sub(r'(LB|OZ|#)(SKON|SKLS|SKOFF)', r'\1 \2', t)
-    
-    # Skin+Bone combos (order matters - longer first)
-    t = re.sub(r'BNLSSKLS', 'BNLS SKLS', t)
-    t = re.sub(r'BNLSKLSS', 'BNLS SKLS', t)
-    t = re.sub(r'BNLSKLS', 'BNLS SKLS', t)
-    t = re.sub(r'BNLSKL\b', 'BNLS SKL', t)
-    t = re.sub(r'SKLSBNLS', 'SKLS BNLS', t)
-    t = re.sub(r'SKONCAN', 'SKON CAN', t)
-    t = re.sub(r'SKOFFE', 'SKOFF E', t)
-    
-    # Skin smashed to following text (FILSKON, #1SKON)
-    t = re.sub(r'(?<=\w)(SKON|SKLS|SKOFF)(?=\w)', r' \1 ', t)
-    t = re.sub(r'(?<=\d)(SKON|SKLS|SKOFF)', r' \1', t)
-    
-    # Bone smashed to following text
-    t = re.sub(r'(?<=\w)(BNLS|PBO)(?=[A-Z])', r' \1 ', t)
-    
-    # CKD/PRCKD smashed to counts
-    t = re.sub(r'(CKD|PRCKD)(\d)', r'\1 \2', t)
-    
-    # Size smashed to following text
-    t = re.sub(r'(\w)(\d+-\d+)\s*Z\b', r'\1 \2OZ', t)
-    
-    # FRZNN typo
-    t = re.sub(r'FRZNN', 'FRZN', t)
-    
-    # B/LES -> BNLS
-    t = re.sub(r'B/LES\b', 'BNLS', t)
-    
-    # Clean up double spaces
-    t = re.sub(r'\s+', ' ', t).strip()
-    
-    return t
+# =========================================================================
+# ORIGIN EXTRACTION — harvest vs processing country
+# =========================================================================
 
+# Patterns that signal "processed in" / "packed in" (the PROCESSING country)
+_PROCESSED_PATTERNS = [
+    r'(?:PROCESSED|PROC|PACKED|PACKAGED|REPROCESSED|REPROC|CUT|PORTIONED|FILLETED)\s+(?:IN\s+)?',
+    r'(?:PROC\s*[/]\s*)',       # PROC/CHINA
+    r'(?:PROCESSED\s*[/]\s*)',  # PROCESSED/VIETNAM
+    r'(?:PKD\s+(?:IN\s+)?)',    # PKD IN CHINA, PKD CHINA
+]
+
+# Patterns that signal "caught in" / "harvested in" / "product of" (the HARVEST country)
+_HARVEST_PATTERNS = [
+    r'(?:CAUGHT|HARVESTED|FARMED|FARM RAISED|WILD CAUGHT|FISHED|SOURCED|ORIGIN)\s+(?:IN\s+)?',
+    r'(?:PRODUCT\s+OF\s+)',                    # PRODUCT OF NORWAY
+    r'(?:FROM\s+)',                             # FROM ALASKA
+    r'(?:WILD\s+)',                             # WILD ALASKA (harvest indicator)
+    r'(?:IMPORTED\s+FROM\s+)',                  # IMPORTED FROM CHILE
+]
+
+# Combined pattern: "CAUGHT ... PROCESSED ..." or "PRODUCT OF X PROC Y"
+_DUAL_ORIGIN_PATTERN = re.compile(
+    r'(?:CAUGHT|HARVESTED|WILD CAUGHT|PRODUCT OF|WILD|FROM|FARMED IN|FARM RAISED IN)\s+(?:IN\s+)?'
+    r'(\w[\w\s]*?)'  # harvest country
+    r'\s*[,/;]\s*'    # separator
+    r'(?:PROCESSED|PROC|PACKED|PACKAGED|CUT|PORTIONED|FILLETED)\s+(?:IN\s+)?'
+    r'(\w[\w\s]*)',   # processing country
+    re.IGNORECASE
+)
+
+
+def _extract_origins(text: str) -> Dict[str, Optional[str]]:
+    """
+    Extract harvest country and processing country from text.
+    
+    Detects patterns like:
+      - "WILD ALASKA PROCESSED IN CHINA"
+      - "PRODUCT OF USA, PROC/CHINA"  
+      - "CAUGHT NORWAY PACKED VIETNAM"
+      - "WILD CAUGHT USA PROC CHN"
+      - "CHINA" (single origin, could be either)
+      - "PRODUCT OF CHILE" (harvest)
+      - "PROCESSED IN VIETNAM" (processing)
+      
+    Returns:
+        Dict with 'harvest' and 'processed' keys, values are country codes or None.
+    """
+    text_upper = text.upper()
+    result = {'harvest': None, 'processed': None}
+    
+    # --- Try dual-origin pattern first (most specific) ---
+    dual = _DUAL_ORIGIN_PATTERN.search(text_upper)
+    if dual:
+        harvest_text = dual.group(1).strip()
+        process_text = dual.group(2).strip()
+        result['harvest'] = _match_country(harvest_text)
+        result['processed'] = _match_country(process_text)
+        if result['harvest'] or result['processed']:
+            return result
+    
+    # --- Try explicit processing patterns ---
+    for pat in _PROCESSED_PATTERNS:
+        m = re.search(pat + r'(\w[\w\s]*?)(?:\s|$|,|/)', text_upper)
+        if m:
+            code = _match_country(m.group(1).strip())
+            if code:
+                result['processed'] = code
+                break
+    
+    # --- Try explicit harvest patterns ---
+    for pat in _HARVEST_PATTERNS:
+        m = re.search(pat + r'(\w[\w\s]*?)(?:\s|$|,|/)', text_upper)
+        if m:
+            code = _match_country(m.group(1).strip())
+            if code:
+                # Don't overwrite if we already found it via dual pattern
+                if not result['harvest']:
+                    result['harvest'] = code
+                break
+    
+    # --- Fallback: single country mention, no context clues ---
+    # If we found a processing country but no harvest, or vice versa, 
+    # leave the other as None (we don't know).
+    # If we found NEITHER, do a simple origin_country lookup as legacy fallback.
+    if not result['harvest'] and not result['processed']:
+        legacy = _extract_attribute(text_upper, 'origin_country')
+        if legacy:
+            # No processing/harvest context — treat as harvest origin
+            # (legacy behavior, most common meaning of "PRODUCT OF X")
+            result['harvest'] = legacy
+    
+    return result
+
+
+def _match_country(text: str) -> Optional[str]:
+    """
+    Match a text fragment to a country code from origin_country standards.
+    """
+    if not text or 'origin_country' not in STANDARD_CODES:
+        return None
+    
+    text = text.strip().upper()
+    
+    # Direct code match
+    if text in STANDARD_CODES['origin_country']:
+        return text
+    
+    # Alias match — longest alias wins
+    best_code = None
+    best_len = 0
+    for code, info in STANDARD_CODES['origin_country'].items():
+        for alias in info.get('aliases', []):
+            if alias == text or alias in text:
+                if len(alias) > best_len:
+                    best_code = code
+                    best_len = len(alias)
+    
+    return best_code
+
+
+# =========================================================================
+# FREEZE CYCLE INFERENCE
+# =========================================================================
+
+def _infer_freeze_cycle(category: Optional[str], origin_harvest: Optional[str],
+                        origin_processed: Optional[str], storage: Optional[str]) -> Optional[str]:
+    """
+    Infer single vs twice-frozen based on species category and processing country.
+    
+    Rules:
+      1. Only applies to FINFISH categories (crustaceans/mollusks exempt)
+      2. If origin_processed is an Asian processing country → TWICE
+      3. If origin_processed matches origin_harvest (or is None) → SINGLE
+      4. If we don't have enough data → None (unknown)
+      
+    The logic:
+      - Wild Alaska Pollock caught in USA, processed in China = TWICE FROZEN
+        (frozen on boat → shipped to China → thawed → filleted → refrozen)
+      - Atlantic Salmon farmed in Norway, processed in Norway = SINGLE
+      - Cod caught in Iceland, processed in Iceland = SINGLE
+      - Tilapia farmed in China, processed in China = SINGLE (never left)
+      
+    Note: Fresh products (storage=FRSH) are not frozen at all, so freeze_cycle
+    does not apply and returns None.
+    """
+    # No category? Can't determine
+    if not category:
+        return None
+    
+    category_lower = category.lower()
+    
+    # Exempt categories (crustaceans, mollusks, cephalopods)
+    if category_lower in EXEMPT_CATEGORIES:
+        return None
+    
+    # Only finfish
+    if category_lower not in FINFISH_CATEGORIES:
+        return None
+    
+    # Fresh product — not frozen, N/A
+    if storage == 'FRSH':
+        return None
+    
+    # If we have a processing country, check if it's a twice-frozen origin
+    if origin_processed:
+        if origin_processed in TWICE_FROZEN_PROCESSING_COUNTRIES:
+            # Exception: if harvest AND processing are the same Asian country,
+            # it's likely domestically farmed+processed = single frozen
+            # e.g., Tilapia farmed in China, processed in China
+            if origin_harvest and origin_harvest == origin_processed:
+                return 'SINGLE'
+            return 'TWICE'
+        else:
+            return 'SINGLE'
+    
+    # No processing country info — if we at least have harvest country,
+    # we can't determine freeze cycle without knowing where it was processed
+    # Exception: if harvest is itself an Asian processing country AND
+    # the species is typically exported for processing (like pollock), 
+    # we still can't assume — leave as None
+    return None
+
+
+# =========================================================================
+# SPECIES EXTRACTION (unchanged from v0.3.0)
+# =========================================================================
 
 def _extract_species(text: str) -> Optional[Dict[str, Any]]:
     """
@@ -182,19 +403,21 @@ def _extract_species(text: str) -> Optional[Dict[str, Any]]:
     Uses a priority system to avoid alias collisions:
       1. Category name in text + subspecies alias match (strongest)
       2. Category name in text, no subspecies match (category-level)
-      3. Subspecies alias only, no category name (fallback)
+      3. Subspecies alias only, no category name (fallback for e.g., 'SABLEFISH')
     
-    Within each priority level, longer alias matches win.
+    Within each priority level, longer alias matches win to prevent
+    short aliases like 'ATL' from shadowing 'ATLANTIC'.
+    
+    Returns dict with species, species_code, category, subspecies.
     """
     text_upper = text.upper()
     
+    # --- Priority 1: Category name present + subspecies alias ---
     category_plus_alias_matches = []
     category_only_matches = []
     
     for category, cat_data in SPECIES_DATA.items():
-        # Normalize category name for matching (orange_roughy -> ORANGE ROUGHY)
-        cat_name = category.upper().replace('_', ' ')
-        if cat_name not in text_upper:
+        if category.upper() not in text_upper:
             continue
         
         found_subspecies = False
@@ -212,7 +435,7 @@ def _extract_species(text: str) -> Optional[Dict[str, Any]]:
         
         if not found_subspecies:
             category_only_matches.append({
-                'species': category.replace('_', ' ').title(),
+                'species': category.title(),
                 'species_code': category.upper(),
                 'category': category,
                 'subspecies': None
@@ -223,10 +446,11 @@ def _extract_species(text: str) -> Optional[Dict[str, Any]]:
         del best['_alias_len']
         return best
     
+    # --- Priority 2: Category name present, no subspecies alias ---
     if category_only_matches:
         return category_only_matches[0]
     
-    # Priority 3: Alias only, no category name in text
+    # --- Priority 3: Alias only, no category name in text ---
     alias_only_matches = []
     
     for category, cat_data in SPECIES_DATA.items():
@@ -249,66 +473,10 @@ def _extract_species(text: str) -> Optional[Dict[str, Any]]:
     return None
 
 
-def _extract_form(text: str) -> Optional[str]:
-    """
-    Extract form, with special handling for TAIL ON / TAIL OFF.
-    """
-    text_upper = text.upper()
-    
-    if 'form' not in STANDARD_CODES:
-        return None
-    
-    matches = []
-    for code, info in STANDARD_CODES['form'].items():
-        for alias in info.get('aliases', []):
-            pattern = r'(?:^|[\s/\-_,])' + re.escape(alias) + r'(?:$|[\s/\-_,])'
-            if re.search(pattern, text_upper) or text_upper == alias:
-                if code == 'TAIL':
-                    tail_on_off = re.search(r'(?:^|[\s/\-_,])TAIL\s*(?:ON|OFF)(?:$|[\s/\-_,])', text_upper)
-                    if tail_on_off:
-                        continue
-                matches.append((len(alias), code, alias))
-    
-    if matches:
-        matches.sort(reverse=True, key=lambda x: x[0])
-        return matches[0][1]
-    
-    return None
-
-
-def _extract_shrimp_form(text: str) -> Optional[str]:
-    """
-    Extract shrimp-specific processing form.
-    """
-    text_upper = text.upper()
-    
-    SHRIMP_FORMS = {
-        'P&D': [r'P\s*&\s*D', r'P/D', r'PD(?!\w)', r'PEELED\s+(?:&\s+)?DEVEINED'],
-        'PUD': [r'PUD', r'P/UD', r'PEELED\s+UNDEVEINED'],
-        'SHELL_ON': [r'SHELL\s*ON', r'SHL\s*ON', r'S/ON', r'HEAD\s*OFF\s*SHELL\s*ON', r'HOSO'],
-        'TAIL_ON': [r'TAIL\s*ON', r'T/ON', r'EZ\s*PEEL', r'EZPEEL', r'TAILON'],
-        'TAIL_OFF': [r'TAIL\s*OFF', r'T/OFF', r'TAILLESS', r'TLOF', r'TAILOFF'],
-        'HEAD_ON': [r'HEAD\s*ON', r'H/ON', r'HOON', r'HDON'],
-    }
-    
-    best_match = None
-    best_len = 0
-    
-    for code, patterns in SHRIMP_FORMS.items():
-        for pat in patterns:
-            full_pattern = r'(?:^|[\s/\-_,])(' + pat + r')(?:$|[\s/\-_,])'
-            m = re.search(full_pattern, text_upper)
-            if m:
-                match_len = len(m.group(1))
-                if match_len > best_len:
-                    best_len = match_len
-                    best_match = code
-    
-    return best_match
-
-
 def _extract_attribute(text: str, category: str) -> Optional[str]:
-    """Extract a standardized attribute from text."""
+    """
+    Extract a standardized attribute from text.
+    """
     if category not in STANDARD_CODES:
         return None
     
@@ -328,37 +496,16 @@ def _extract_attribute(text: str, category: str) -> Optional[str]:
     return None
 
 
-def _extract_meat_grade(expanded_text: str, original_text: str) -> Optional[str]:
-    """
-    Extract meat grade with protection against false positives.
-    
-    'LUMPFISH' is a species name, not meat grade 'LUMP'.
-    """
-    text_upper = original_text.upper()
-    
-    if 'LUMPFISH' in text_upper:
-        if 'meat_grade' not in STANDARD_CODES:
-            return None
-        matches = []
-        for code, info in STANDARD_CODES['meat_grade'].items():
-            if code == 'LUMP':
-                continue
-            for alias in info.get('aliases', []):
-                if 'LUMP' in alias and 'JUMBO' not in alias:
-                    continue
-                pattern = r'(?:^|[\s/\-_,])' + re.escape(alias) + r'(?:$|[\s/\-_,])'
-                if re.search(pattern, expanded_text.upper()) or expanded_text.upper() == alias:
-                    matches.append((len(alias), code, alias))
-        if matches:
-            matches.sort(reverse=True, key=lambda x: x[0])
-            return matches[0][1]
-        return None
-    
-    return _extract_attribute(expanded_text, 'meat_grade')
-
-
 def _extract_size(text: str) -> Optional[str]:
-    """Extract size specification from text."""
+    """
+    Extract size specification from text.
+    
+    Handles various formats:
+    - "6 oz", "6OZ", "6 OZ"
+    - "5-7 oz", "5-7OZ"
+    - "3-4 lb", "3-4#"
+    - "2-3#"
+    """
     text_upper = text.upper()
     
     oz_patterns = [
@@ -391,7 +538,13 @@ def _extract_size(text: str) -> Optional[str]:
 
 
 def _extract_count(text: str) -> Optional[str]:
-    """Extract count size (for shrimp, scallops)."""
+    """
+    Extract count size (for shrimp, scallops).
+    
+    Handles:
+    - "16/20", "21/25", "U10", "U/10"
+    - "16-20 ct", "21-25 count"
+    """
     text_upper = text.upper()
     
     u_match = re.search(r'U[/-]?(\d+)', text_upper)
@@ -406,7 +559,9 @@ def _extract_count(text: str) -> Optional[str]:
 
 
 def _extract_brand(text: str) -> Optional[str]:
-    """Extract brand name from common foodservice brands."""
+    """
+    Extract brand name from common foodservice brands.
+    """
     COMMON_BRANDS = [
         'PORTICO', 'TRIDENT', 'HIGH LINER', 'HIGHLINER',
         'ICYBAY', 'SEAMAZZ', 'HARBOR BANKS', 'TRUE NORTH', 'SEAFARERS',
@@ -427,12 +582,28 @@ def _extract_brand(text: str) -> Optional[str]:
 
 
 def parse_batch(descriptions: List[str]) -> List[Dict[str, Any]]:
-    """Parse multiple descriptions at once."""
+    """
+    Parse multiple descriptions at once.
+    
+    Args:
+        descriptions: List of item descriptions
+        
+    Returns:
+        List of parsed result dictionaries
+    """
     return [parse(desc) for desc in descriptions]
 
 
 def extract_key_attributes(description: str) -> Dict[str, str]:
-    """Extract only the key attributes needed for matching."""
+    """
+    Extract only the key attributes needed for matching.
+    
+    This is a simplified version of parse() that returns only
+    the attributes typically used for comparison keys.
+    
+    Returns:
+        Dict with: species, form, skin, bone, size, trim, freeze_cycle, etc.
+    """
     result = parse(description)
     
     return {
@@ -445,5 +616,5 @@ def extract_key_attributes(description: str) -> Dict[str, str]:
         'meat_grade': result.get('meat_grade'),
         'preparation': result.get('preparation'),
         'value_added': result.get('value_added'),
-        'shrimp_form': result.get('shrimp_form')
+        'freeze_cycle': result.get('freeze_cycle'),
     }

@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: fishlib
-Version: 0.2.0
+Version: 0.4.1
 Summary: A Python library for parsing, standardizing, and comparing seafood product descriptions in foodservice
 Home-page: https://github.com/KTG0409/fishlib
 Author: Karen Morton
@@ -37,7 +37,7 @@ Dynamic: provides-extra
 Dynamic: requires-python
 Dynamic: summary
 
-# fishlib ðŸŸ
+# fishlib 🐟
 
 A Python library for parsing, standardizing, and comparing seafood product descriptions in the food industry.
 

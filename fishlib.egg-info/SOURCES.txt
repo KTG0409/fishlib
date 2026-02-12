@@ -18,3 +18,4 @@ fishlib/reference/__init__.py
 fishlib/species/__init__.py
 tests/__init__.py
 tests/test_fishlib.py
+tests/test_v040.py

@@ -1,50 +1,38 @@
 # Changelog
 
-## v0.3.0
+All notable changes to fishlib will be documented in this file.
 
-### New Species (14 added, 45 categories / 109 species total)
-- **Anchovy** - Atlantic, Mediterranean varieties
-- **Whiting** - Silver hake
-- **Perch** - Yellow perch, Ocean perch
-- **Sardine** - Pilchard
-- **Herring** - Atlantic, Pacific
-- **Mackerel** - Atlantic, Spanish, King
-- **Hake** - Generic, Cape hake
-- **Orange Roughy** - Deep sea perch
-- **Corvina** - Drum, Croaker
-- **Cobia** - Lemonfish
-- **Langostino** - Langoustine, Squat lobster
-- **Conch** - Queen conch
-- **Hamachi** - Yellowtail, Japanese amberjack, Kampachi
-- **Pike** - Walleye, Northern pike
+## [0.2.0] - 2026-02-06
 
-### Bug Fixes
-- **BRONZINI alias** now correctly maps to branzino
-- **Raw vs Cooked** shrimp now correctly marked as NOT comparable
-- **Breaded vs Plain** now correctly marked as NOT comparable
-- **"TAIL ON"** no longer misparses as form=TAIL for shrimp
-- **P&D** now detected as shrimp_form attribute
-- **LUMPFISH** no longer falsely triggers meat_grade=LUMP
-- **Smashed codes** now parsed correctly (BNLSKL, SKONCAN, SKOFFE, CKD100/150, etc.)
+### Added
+- **New attributes**: `meat_grade`, `preparation`, `value_added` parsing and standardization
+- **New species** (19 added):
+  - Snapper: Red, Yellowtail, Vermilion, Lane, Mangrove, Silk
+  - Grouper: Red, Black, Gag, Yellowedge, Scamp
+  - Branzino, Sea Bass (Chilean, Black, Striped)
+  - Trout (Rainbow, Steelhead, Brook), Barramundi, Wahoo, Monkfish, Crawfish
+- **New origins** (15 added): Faroe Islands, Bangladesh, Myanmar, Philippines, Peru, Argentina, UK, Japan, South Korea, Taiwan, Spain, Portugal, Greece, Turkey, Honduras
+- **New standardization functions**: `standardize_meat_grade()`, `standardize_preparation()`, `standardize_value_added()`
+- **New standard codes**: meat_grade (6 grades), preparation (4 types), value_added (7 types)
+- **Reference data**: Meat grade definitions, preparation types, value-added processing types with industry insights
+- **Matcher improvements**: comparison_key and match now include meat_grade, preparation, and value_added
 
-### New Aliases and Codes
-- **Trim**: DTRIM, D/TRIM, ETRIM, E/TRIM
-- **Preparation**: PRCKD (precooked), SMKD (smoked)
-- **Value-Added**: CRISPANKO, POPCORN/POPCRN, PUB STYLE
-- **Cut Style**: SAKU (Japanese block cut), XTBIAS (extra bias)
-- **Form**: PASTE, CLUSTERS (plural)
+### Fixed
+- Species matching: "COD ATLANTIC" now correctly identifies as cod, not salmon
+- Species priority system: category name in text takes precedence over alias-only matches
+- Longer alias matches now preferred over shorter ones to prevent false positives
 
-### Improved Parser
-- New smashed-code pre-processor splits concatenated abbreviations
-- LUMPFISH false positive protection for meat_grade
-- Shrimp form detection: P&D, PUD, SHELL_ON, TAIL_ON, TAIL_OFF, HEAD_ON
-- Zero dependencies (pandas removed)
+### Changed
+- Removed hardcoded price ranges (price tiers retained for relative comparisons)
+- Species extraction uses three-tier priority system for better accuracy
 
-## v0.2.0
-- New attributes: meat_grade, preparation, value_added
-- 19 new species (snapper, grouper, branzino, sea bass, trout, etc.)
-- 15 new origin countries
-- Fixed species matching priority system
+## [0.1.0] - 2025-12-XX
 
-## v0.1.0
+### Added
 - Initial release
+- Parser for seafood item descriptions
+- Standardization for form, skin, bone, trim, pack, storage, cut_style, harvest, origin
+- Species support for: Salmon, Crab, Lobster, Shrimp, Cod, Haddock, Pollock, Halibut, Flounder, Sole, Tilapia, Swai, Catfish, Scallop, Tuna, Mahi, Swordfish, Calamari, Octopus, Clam, Oyster, Mussel
+- Matcher module with comparison_key, match, is_comparable, find_matches
+- Reference data for trim levels, cut styles, forms, skin/bone codes, pack styles, price tiers
+- Species module with price tiers, aliases, harvest types
