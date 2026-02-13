@@ -32,7 +32,7 @@ v0.4.0 — Freeze Cycle Awareness:
     # 'NOT COMPARABLE - Different freeze cycle (single vs twice-frozen)'
 """
 
-__version__ = "0.4.2"
+__version__ = "0.4.3"
 __author__ = "Karen Morton"
 __license__ = "MIT"
 

@@ -781,15 +781,49 @@
     "catfish": {
         "category": "Freshwater",
         "species": {
-            "channel": {
-                "name": "Channel Catfish",
+            "domestic": {
+                "name": "US Farm-Raised Catfish",
                 "aliases": [
-                    "CHANNEL",
-                    "US",
+                    "USA",
                     "DOMESTIC",
-                    "ICTALURUS PUNCTATUS"
+                    "US FARM",
+                    "FARM RAISED",
+                    "FARMED",
+                    "AMERICAN",
+                    "MISSISSIPPI",
+                    "ALABAMA",
+                    "ARKANSAS",
+                    "TEXAS",
+                    "SHANK"
                 ],
                 "harvest": "farm",
+                "price_tier": "mid"
+            },
+            "channel": {
+                "name": "Channel Catfish (Imported)",
+                "aliases": [
+                    "CHANNEL",
+                    "ICTALURUS PUNCTATUS",
+                    "CHINA",
+                    "CHINESE",
+                    "CHI",
+                    "CHN",
+                    "VIETNAM",
+                    "VIETNAMESE",
+                    "VNM"
+                ],
+                "harvest": "farm",
+                "price_tier": "economy"
+            },
+            "blue": {
+                "name": "Blue Catfish",
+                "aliases": [
+                    "BLUE",
+                    "WILD BLUE",
+                    "WLD BLUE",
+                    "ICTALURUS FURCATUS"
+                ],
+                "harvest": "wild",
                 "price_tier": "mid"
             }
         },
@@ -797,7 +831,8 @@
             "FIL",
             "WHL",
             "NUG",
-            "STRIP"
+            "STRIP",
+            "STEAK"
         ]
     },
     "scallop": {
@@ -806,10 +841,13 @@
             "sea": {
                 "name": "Sea Scallop",
                 "aliases": [
+                    "SEA SCALLOP",
                     "SEA",
                     "ATLANTIC SEA",
                     "PLACOPECTEN MAGELLANICUS",
-                    "DIVER"
+                    "DIVER",
+                    "DIVER SCALLOP",
+                    "DAY BOAT"
                 ],
                 "harvest": "wild",
                 "price_tier": "ultra-premium"
@@ -1382,9 +1420,10 @@
                 "aliases": [
                     "STRIPED BASS",
                     "STRIPER",
-                    "ROCKFISH",
                     "MORONE SAXATILIS",
-                    "HYBRID STRIPED"
+                    "HYBRID STRIPED",
+                    "BASS STRIPED",
+                    "HYBRID BASS"
                 ],
                 "harvest": "both",
                 "price_tier": "premium"
@@ -1550,6 +1589,36 @@
             "WHL",
             "TAIL",
             "MEAT"
+        ]
+    },
+    "rockfish": {
+        "category": "Groundfish",
+        "species": {
+            "pacific": {
+                "name": "Pacific Rockfish",
+                "aliases": [
+                    "ROCKFISH",
+                    "PACIFIC ROCKFISH",
+                    "ROCK COD",
+                    "SEBASTES",
+                    "SNAPPER ROCKFISH",
+                    "RED ROCKFISH",
+                    "VERMILION ROCKFISH",
+                    "CANARY ROCKFISH",
+                    "WIDOW ROCKFISH",
+                    "YELLOWEYE ROCKFISH",
+                    "BOCACCIO",
+                    "SHORTRAKER",
+                    "ROUGHEYE"
+                ],
+                "harvest": "wild",
+                "price_tier": "mid"
+            }
+        },
+        "forms": [
+            "FIL",
+            "WHL",
+            "PRTN"
         ]
     }
 }

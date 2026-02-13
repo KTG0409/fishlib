@@ -44,7 +44,7 @@ FINFISH_CATEGORIES = {
     'grouper', 'branzino', 'sea_bass', 'trout', 'barramundi', 'wahoo',
     'monkfish', 'anchovy', 'whiting', 'perch', 'sardine', 'herring',
     'mackerel', 'hake', 'orange_roughy', 'corvina', 'cobia', 'hamachi',
-    'pike',
+    'pike', 'rockfish',
 }
 
 # Categories EXEMPT from twice-frozen logic
@@ -421,13 +421,15 @@ def _extract_species(text: str) -> Optional[Dict[str, Any]]:
     category_only_matches = []
     
     for category, cat_data in SPECIES_DATA.items():
-        if category.upper() not in text_upper:
+        # Handle underscored category names: sea_bass → "SEA BASS"
+        cat_name = category.upper().replace('_', ' ')
+        if cat_name not in text_upper:
             continue
         
         found_subspecies = False
         for subspec, spec_info in cat_data.get('species', {}).items():
             for alias in spec_info.get('aliases', []):
-                if alias in text_upper:
+                if _alias_in_text(alias, text_upper):
                     category_plus_alias_matches.append({
                         'species': spec_info['name'],
                         'species_code': f"{category.upper()}|{subspec.upper()}",
@@ -439,7 +441,7 @@ def _extract_species(text: str) -> Optional[Dict[str, Any]]:
         
         if not found_subspecies:
             category_only_matches.append({
-                'species': category.title(),
+                'species': category.replace('_', ' ').title(),
                 'species_code': category.upper(),
                 'category': category,
                 'subspecies': None
@@ -460,7 +462,7 @@ def _extract_species(text: str) -> Optional[Dict[str, Any]]:
     for category, cat_data in SPECIES_DATA.items():
         for subspec, spec_info in cat_data.get('species', {}).items():
             for alias in spec_info.get('aliases', []):
-                if len(alias) >= 3 and alias in text_upper:
+                if len(alias) >= 4 and _alias_in_text(alias, text_upper):
                     alias_only_matches.append({
                         'species': spec_info['name'],
                         'species_code': f"{category.upper()}|{subspec.upper()}",
@@ -475,6 +477,22 @@ def _extract_species(text: str) -> Optional[Dict[str, Any]]:
         return best
     
     return None
+
+
+def _alias_in_text(alias: str, text_upper: str) -> bool:
+    """
+    Check if an alias appears in text with word boundary awareness.
+    
+    Short aliases (<=4 chars like 'SEA', 'ATL', 'RED') require word boundaries
+    to avoid false matches. Longer aliases can match as substrings since they're
+    specific enough (e.g., 'SABLEFISH', 'CHILEAN SEA BASS').
+    """
+    if len(alias) <= 4:
+        # Require word boundaries for short aliases
+        pattern = r'(?:^|[\s/\-_,])' + re.escape(alias) + r'(?:$|[\s/\-_,])'
+        return bool(re.search(pattern, text_upper))
+    else:
+        return alias in text_upper
 
 
 def _extract_attribute(text: str, category: str) -> Optional[str]:
