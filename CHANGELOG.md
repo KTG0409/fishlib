@@ -1,9 +1,51 @@
 # Changelog
-
 All notable changes to fishlib will be documented in this file.
 
-## [0.2.0] - 2026-02-06
+## [0.4.3] - 2026-02-18
+### Fixed
+- **Rockfish misclassification**: Pacific rockfish (Sebastes) was incorrectly tagged as Striped Bass — now its own `rockfish` category with 13 aliases (60 Sysco items fixed)
+- **Striped bass missed**: Reversed word order "BASS STRIPED" now correctly parses (65 Sysco items fixed)
+- **Catfish restructured**: Subspecies split into `domestic` (US farm-raised), `channel` (imported China/Vietnam), and `blue` (wild blue catfish)
+- **Scallop false match**: Standalone "SEA" alias removed from Priority 3 matching (min alias length raised to 4 chars) — prevents "BASS SEA FILET STRIPED" from matching as Sea Scallop
 
+### Added
+- New species category: `rockfish` (Pacific Rockfish / Sebastes) with aliases for common varieties (bocaccio, canary, vermilion, widow, yelloweye, etc.)
+- Catfish subspecies: `domestic`, `channel`, `blue` with origin-aware classification
+- Striped bass aliases: "BASS STRIPED", "HYBRID BASS" for reversed word order
+
+## [0.4.2] - 2026-02-18
+### Added
+- **Size bucket matching**: New `size_bucket` field maps exact sizes and ranges into standard foodservice competitive buckets
+- Ounce buckets: 1-2OZ through 16OZ+
+- Pound buckets: UNDER-1LB through 9LB+
+- `2OZ` and `2-3OZ` now land in the same bucket → comparable for PMI matching
+- Matcher uses `size_bucket` instead of raw `size` for comparison_key and matching
+- Raw `size` field preserved for exact specifications
+
+## [0.4.1] - 2026-02-12
+### Fixed
+- README fish emoji (🐟) garbled during build — fixed line 1 encoding
+
+## [0.4.0] - 2026-02-12
+### Added
+- **Origin split**: `origin_harvest` (where caught/farmed) and `origin_processed` (where cut/portioned)
+- Dual-origin parsing: "WILD ALASKA PROCESSED IN CHINA" → harvest=USA, processed=CHN
+- Patterns: "PRODUCT OF X, PROC Y", "CAUGHT X/PROCESSED Y", "PACKED IN Y"
+- **Freeze cycle inference**: `freeze_cycle` field (SINGLE, TWICE, or None)
+  - Finfish + Asian processing country → TWICE (twice-frozen)
+  - Exception: harvest=processing country (e.g., tilapia farmed+processed in China) → SINGLE
+  - Crustaceans, mollusks, cephalopods → exempt (None)
+  - Fresh products → None
+- Freeze cycle mismatch is a HARD BLOCK on comparability in matcher
+- Legacy `origin` field preserved (harvest priority, fallback to processed)
+- New standardization: `standardize_origin_harvest()`, `standardize_origin_processed()`
+
+## [0.3.0] - 2026-02-10
+### Added
+- **14 new species categories**: Anchovy, Whiting, Perch, Sardine, Herring, Mackerel, Hake, Orange Roughy, Corvina, Cobia, Langostino, Conch, Hamachi, Pike
+- Fixed BRONZINI alias → BRANZINO
+
+## [0.2.0] - 2026-02-06
 ### Added
 - **New attributes**: `meat_grade`, `preparation`, `value_added` parsing and standardization
 - **New species** (19 added):
@@ -16,18 +58,15 @@ All notable changes to fishlib will be documented in this file.
 - **New standard codes**: meat_grade (6 grades), preparation (4 types), value_added (7 types)
 - **Reference data**: Meat grade definitions, preparation types, value-added processing types with industry insights
 - **Matcher improvements**: comparison_key and match now include meat_grade, preparation, and value_added
-
 ### Fixed
 - Species matching: "COD ATLANTIC" now correctly identifies as cod, not salmon
 - Species priority system: category name in text takes precedence over alias-only matches
 - Longer alias matches now preferred over shorter ones to prevent false positives
-
 ### Changed
 - Removed hardcoded price ranges (price tiers retained for relative comparisons)
 - Species extraction uses three-tier priority system for better accuracy
 
 ## [0.1.0] - 2025-12-XX
-
 ### Added
 - Initial release
 - Parser for seafood item descriptions
