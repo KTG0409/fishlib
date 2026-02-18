@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="fishlib",
-    version="0.4.3",
+    version="0.4.4",
     author="Karen Morton",
     author_email="kmorton319@gmail.com",
     description="A Python library for parsing, standardizing, and comparing seafood product descriptions in foodservice",
@@ -17,7 +17,7 @@ setup(
         'fishlib': ['data/*.json'],
     },
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Information Analysis",
@@ -32,9 +32,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.8",
-    install_requires=[
-        # No dependencies - fishlib is lightweight by design
-    ],
+    install_requires=[],
     extras_require={
         "dev": [
             "pytest>=6.0.0",

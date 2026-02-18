@@ -442,7 +442,11 @@
                 "ALASKA",
                 "AK",
                 "MAINE",
-                "GULF"
+                "GULF",
+                "ALSK",
+                "ALASKAN",
+                "DOMSTC",
+                "WILD AK"
             ]
         },
         "CAN": {
@@ -451,7 +455,9 @@
                 "CANADA",
                 "CAN",
                 "CANADIAN",
-                "CDN"
+                "CDN",
+                "CANADN",
+                "CANADAIN"
             ]
         },
         "NOR": {
@@ -460,7 +466,9 @@
                 "NORWAY",
                 "NOR",
                 "NORW",
-                "NORWEGIAN"
+                "NORWEGIAN",
+                "NORWG",
+                "NORWGN"
             ]
         },
         "CHL": {
@@ -468,7 +476,8 @@
             "aliases": [
                 "CHILE",
                 "CHL",
-                "CHILEAN"
+                "CHILEAN",
+                "CHLN"
             ]
         },
         "CHN": {
@@ -485,7 +494,8 @@
             "aliases": [
                 "INDONESIA",
                 "IDN",
-                "INDO"
+                "INDO",
+                "INDON"
             ]
         },
         "VNM": {
@@ -493,7 +503,8 @@
             "aliases": [
                 "VIETNAM",
                 "VNM",
-                "VIET"
+                "VIET",
+                "VIETN"
             ]
         },
         "THA": {
@@ -524,7 +535,8 @@
             "name": "Ecuador",
             "aliases": [
                 "ECUADOR",
-                "ECU"
+                "ECU",
+                "ECUAD"
             ]
         },
         "ICE": {
@@ -532,7 +544,9 @@
             "aliases": [
                 "ICELAND",
                 "ICE",
-                "ICELANDIC"
+                "ICELANDIC",
+                "ICELND",
+                "ICELAN"
             ]
         },
         "SCO": {
@@ -540,7 +554,10 @@
             "aliases": [
                 "SCOTLAND",
                 "SCO",
-                "SCOTTISH"
+                "SCOTTISH",
+                "SCOTCH",
+                "SCOTTSH",
+                "SCOT"
             ]
         },
         "NZL": {
@@ -607,7 +624,8 @@
             "aliases": [
                 "PERU",
                 "PER",
-                "PERUVIAN"
+                "PERUVIAN",
+                "PERUV"
             ]
         },
         "ARG": {
@@ -621,11 +639,10 @@
         "GBR": {
             "name": "United Kingdom",
             "aliases": [
-                "UK",
                 "UNITED KINGDOM",
                 "GBR",
                 "BRITISH",
-                "ENGLAND"
+                "GREAT BRITAIN"
             ]
         },
         "JPN": {
@@ -674,7 +691,8 @@
             "aliases": [
                 "GREECE",
                 "GRC",
-                "GREEK"
+                "GREEK",
+                "GRK"
             ]
         },
         "TUR": {
@@ -691,6 +709,24 @@
                 "HONDURAS",
                 "HON",
                 "HONDURAN"
+            ]
+        },
+        "BRA": {
+            "name": "Brazil",
+            "aliases": [
+                "BRAZIL",
+                "BRAZILIAN",
+                "BRA",
+                "BRASIL"
+            ]
+        },
+        "MRT": {
+            "name": "Mauritius",
+            "aliases": [
+                "MAURITIUS",
+                "MAURITS",
+                "MAURIT",
+                "MRT"
             ]
         }
     },

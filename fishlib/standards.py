@@ -210,42 +210,6 @@ def standardize_origin(text: str) -> Optional[str]:
     return _find_match(text, 'origin_country')
 
 
-def standardize_origin_harvest(text: str) -> Optional[str]:
-    """
-    Standardize harvest country of origin (where fish was caught/farmed).
-    
-    Examples:
-        'ALASKA' -> 'USA'
-        'NORWAY' -> 'NOR'
-        'CHILE' -> 'CHL'
-    
-    Args:
-        text: The harvest origin to standardize
-        
-    Returns:
-        Standard origin code or None if not recognized
-    """
-    return _find_match(text, 'origin_country')
-
-
-def standardize_origin_processed(text: str) -> Optional[str]:
-    """
-    Standardize processing country (where fish was cut/portioned/repackaged).
-    
-    Examples:
-        'CHINA' -> 'CHN'
-        'VIETNAM' -> 'VNM'
-        'THAILAND' -> 'THA'
-    
-    Args:
-        text: The processing origin to standardize
-        
-    Returns:
-        Standard origin code or None if not recognized
-    """
-    return _find_match(text, 'origin_country')
-
-
 def standardize_size(text: str) -> Optional[str]:
     """
     Standardize size/weight specifications.
@@ -374,8 +338,6 @@ def get_standard_code(attribute: str, value: str) -> Optional[str]:
         'cut_style': standardize_cut_style,
         'harvest': standardize_harvest,
         'origin': standardize_origin,
-        'origin_harvest': standardize_origin_harvest,
-        'origin_processed': standardize_origin_processed,
         'size': standardize_size,
         'meat_grade': standardize_meat_grade,
         'preparation': standardize_preparation,

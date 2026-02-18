@@ -1,10 +1,10 @@
-# fishlib 🐟
+# fishlib ðŸŸ
 
 A Python library for parsing, standardizing, and comparing seafood product descriptions in the food industry.
 
 **The Problem:** Seafood product descriptions are messy. The same product can be described a hundred different ways. Comparing prices across distributors, suppliers, or market data requires deep domain knowledge to know if two items are actually comparable.
 
-**The Solution:** `fishlib` parses item descriptions into structured attributes, standardizes them to common codes, and enables apples-to-apples comparisons—so you don't need to be a fish expert to work with seafood data.
+**The Solution:** `fishlib` parses item descriptions into structured attributes, standardizes them to common codes, and enables apples-to-apples comparisonsâ€”so you don't need to be a fish expert to work with seafood data.
 
 ## Installation
 
@@ -28,7 +28,6 @@ print(item)
 #     'bone': 'BNLS',
 #     'trim': 'D',
 #     'size': '6OZ',
-#     'size_bucket': '6-8OZ',
 #     'pack': 'IVP',
 #     'storage': 'FRZ'
 # }
@@ -36,7 +35,7 @@ print(item)
 # Get a comparison key for matching
 key = fishlib.comparison_key(item)
 print(key)
-# "SALMON|ATLANTIC|FIL|SKON|BNLS|D|6-8OZ"
+# "SALMON|ATLANTIC|FIL|SKON|BNLS|D|6OZ"
 
 # Check if two items are comparable
 distributor_item = "SALMON PORTION ATL BNLS SKLS 6 OZ CENTER CUT"
@@ -62,40 +61,7 @@ fishlib.parse("SALMON SOCKEYE FIL WILD ALASKA SKON 8OZ IQF")
 # Returns structured dict with all attributes
 ```
 
-### Origin Tracking (v0.4.0)
-Separate harvest and processing countries for accurate sourcing:
-
-```python
-fishlib.parse("POLLOCK FIL WILD ALASKA PROCESSED IN CHINA 6OZ")
-# Returns:
-# {
-#     'origin_harvest': 'USA',
-#     'origin_processed': 'CHN',
-#     'freeze_cycle': 'TWICE',
-#     ...
-# }
-```
-
-### Freeze Cycle Inference (v0.4.0)
-Automatically determines single-frozen vs twice-frozen:
-
-- Finfish + Asian processing country → **TWICE** (twice-frozen)
-- Finfish domestic processing → **SINGLE** (single-frozen)
-- Crustaceans/mollusks → exempt
-- Freeze cycle mismatch = **hard block** on comparability
-
-### Size Bucket Matching (v0.4.2)
-Exact sizes and ranges map to competitive buckets for PMI comparisons:
-
-```python
-fishlib.parse("POLLOCK FIL 2OZ")['size_bucket']    # '2-3OZ'
-fishlib.parse("POLLOCK FIL 2-3OZ")['size_bucket']  # '2-3OZ'
-
-# Now comparable!
-fishlib.is_comparable("POLLOCK FIL 2OZ", "POLLOCK FIL 2-3OZ")  # True
-```
-
-### Enhanced Attribute Extraction (v0.2.0)
+### New in v0.4.4: Enhanced Attribute Extraction
 
 ```python
 # Crab meat grade detection
@@ -127,20 +93,19 @@ Consistent codes across any data source:
 | **Value-Added** | BREADED, STUFFED, MARINATED, GLAZED, BLACKENED, FORMED |
 
 ### Species Support
-Built-in knowledge for 46 seafood categories and 90+ species:
+Built-in knowledge for 31 seafood categories and 86 species:
 
 - **Salmon**: Atlantic, King/Chinook, Sockeye, Coho, Keta/Chum, Pink
 - **Crab**: King, Snow, Dungeness, Blue, Stone, Jonah, Soft Shell
 - **Lobster**: Maine, Canadian, Warm Water
 - **Shrimp**: White, Pink, Brown, Tiger, Rock, Royal Red
-- **Groundfish**: Cod (Atlantic, Pacific, Black/Sablefish, Ling), Haddock, Pollock, Rockfish
+- **Groundfish**: Cod (Atlantic, Pacific, Black/Sablefish, Ling), Haddock, Pollock
 - **Flatfish**: Flounder, Halibut, Sole (Dover, Petrale, Lemon, Rex, Gray)
 - **Shellfish**: Scallops (Sea, Bay, Calico), Clams, Oysters, Mussels
 - **Snapper**: Red, Yellowtail, Vermilion, Lane, Mangrove, Silk
 - **Grouper**: Red, Black, Gag, Yellowedge, Scamp
-- **Catfish**: US Farm-Raised (Domestic), Channel (Imported), Blue
-- **Other Finfish**: Branzino, Sea Bass (Chilean, Black, Striped), Trout, Barramundi, Wahoo, Monkfish, Mahi, Swordfish, Tuna, Anchovy, Whiting, Perch, Sardine, Herring, Mackerel, Hake, Orange Roughy, Corvina, Cobia, Hamachi, Pike
-- **Other Shellfish**: Crawfish, Calamari, Octopus, Langostino, Conch
+- **Other Finfish**: Branzino, Sea Bass (Chilean, Black, Striped), Trout, Barramundi, Wahoo, Monkfish, Mahi, Swordfish, Tuna
+- **Other Shellfish**: Crawfish, Calamari, Octopus
 
 ### Reference Data
 Access industry knowledge:
@@ -202,33 +167,18 @@ In food distribution, comparing prices requires knowing if products are truly co
 - Center-cut bias portion (premium)
 - Block-cut with tail pieces (commodity)
 
-Without the right attributes, price comparisons are meaningless. `fishlib` encodes the domain knowledge needed to make accurate comparisons—so you don't need 20 years of fish experience to work with seafood data.
+Without the right attributes, price comparisons are meaningless. `fishlib` encodes the domain knowledge needed to make accurate comparisonsâ€”so you don't need 20 years of fish experience to work with seafood data.
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for full version history.
-
-### Latest: v0.4.3
-- **Rockfish**: Own category (Pacific Rockfish / Sebastes) — no longer misclassified as Striped Bass
-- **Striped Bass**: Reversed word order ("BASS STRIPED") now parses correctly
-- **Catfish**: Split into Domestic (US farm-raised), Channel (imported), and Blue subspecies
-- **Scallop**: Fixed false-match on standalone "SEA" alias
-
-### v0.4.2
-- **Size buckets**: `2OZ` and `2-3OZ` now match for competitive comparisons
-
-### v0.4.0
-- **Origin split**: Separate harvest vs processing country tracking
-- **Freeze cycle**: Automatic single-frozen vs twice-frozen inference
-
-### v0.3.0
-- **14 new species**: Anchovy, Whiting, Perch, Sardine, Herring, Mackerel, Hake, Orange Roughy, Corvina, Cobia, Langostino, Conch, Hamachi, Pike
-
-### v0.2.0
+### v0.4.4
 - **New attributes**: meat_grade, preparation, value_added
-- **19 new species**: Snapper, Grouper, Branzino, Sea Bass, Trout, Barramundi, Wahoo, Monkfish, Crawfish
+- **New species**: Snapper (6), Grouper (5), Branzino, Sea Bass (3), Trout (3), Barramundi, Wahoo, Monkfish, Crawfish
+- **New origins**: Faroe Islands, Bangladesh, Myanmar, Philippines, Peru, Argentina, UK, Japan, South Korea, Taiwan, Spain, Portugal, Greece, Turkey, Honduras
+- **Fixed**: Species matching now correctly identifies "COD ATLANTIC" as cod (not salmon)
+- **Removed**: Hardcoded price ranges (price tiers retained for relative comparisons)
 
-### v0.1.0
+### v0.4.4
 - Initial release
 
 ## Contributing
@@ -241,10 +191,10 @@ Contributions welcome! Areas of interest:
 
 ## Author
 
-**Karen Morton** — Seafood industry professional with 20+ years of experience in category management and procurement.
+**Karen Morton** - Seafood industry professional with experience in category management and procurement.
 
 Built from years of experience managing seafood categories and the realization that this knowledge should be accessible to everyone, not trapped in experts' heads.
 
 ## License
 
-MIT License — Use it, modify it, share it. Just make seafood data better for everyone.
+MIT License - Use it, modify it, share it. Just make seafood data better for everyone.
