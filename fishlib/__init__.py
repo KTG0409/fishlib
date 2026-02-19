@@ -13,27 +13,26 @@ you're overpriced when you're comparing apples to oranges.
 THE GOAL:
 Capture attributes correctly so ANYONE can trust the data without being a fish expert.
 
-Example usage:
+v0.4.0 — Freeze Cycle Awareness:
     import fishlib
     
-    # Parse an item description
-    item = fishlib.parse("SALMON FIL ATL SKON DTRM 6OZ IVP")
-    print(item)
-    # {'species': 'Atlantic Salmon', 'form': 'FIL', 'skin': 'SKON', 
-    #  'trim': 'D', 'size': '6OZ', 'pack': 'IVP'}
+    # Pollock caught in Alaska, processed in China = TWICE FROZEN
+    item = fishlib.parse("POLLOCK FIL WILD ALASKA PROCESSED IN CHINA 6OZ IVP")
+    print(item['origin_harvest'])    # 'USA'
+    print(item['origin_processed'])  # 'CHN'
+    print(item['freeze_cycle'])      # 'TWICE'
     
-    # Get comparison key for matching
-    key = fishlib.comparison_key(item)
-    print(key)
-    # 'SALMON|ATLANTIC|FIL|SKON|D|6OZ'
+    # Same pollock, processed domestically = SINGLE FROZEN
+    item2 = fishlib.parse("POLLOCK FIL WILD ALASKA 6OZ IVP")
     
-    # Check if two items are comparable
-    result = fishlib.match("SALMON FIL ATL 6OZ", "Portico Salmon Fillet 6oz")
-    print(result['is_comparable'])  # True
-    print(result['confidence'])     # 0.92
+    # These are NOT comparable for pricing
+    result = fishlib.match(item, item2)
+    print(result['is_comparable'])   # False
+    print(result['recommendation'])
+    # 'NOT COMPARABLE - Different freeze cycle (single vs twice-frozen)'
 """
 
-__version__ = "0.4.4"
+__version__ = "0.4.5"
 __author__ = "Karen Morton"
 __license__ = "MIT"
 
@@ -48,6 +47,8 @@ from .standards import (
     standardize_cut_style,
     standardize_harvest,
     standardize_origin,
+    standardize_origin_harvest,
+    standardize_origin_processed,
     standardize_size,
     standardize_meat_grade,
     standardize_preparation,
@@ -80,6 +81,8 @@ __all__ = [
     'standardize_cut_style',
     'standardize_harvest',
     'standardize_origin',
+    'standardize_origin_harvest',
+    'standardize_origin_processed',
     'standardize_size',
     'standardize_meat_grade',
     'standardize_preparation',

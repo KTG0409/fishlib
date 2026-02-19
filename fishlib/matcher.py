@@ -3,6 +3,12 @@ Matcher module for fishlib.
 
 Provides functions for comparing seafood items and determining if they're comparable
 for pricing analysis.
+
+v0.4.0 changes:
+  - freeze_cycle added to comparison attributes
+  - freeze_cycle mismatch (SINGLE vs TWICE) is a HARD BLOCK on comparability
+    (same as different species or different form)
+  - freeze_cycle included in comparison key
 """
 
 from typing import Dict, Any, Optional, List, Tuple
@@ -21,12 +27,12 @@ def comparison_key(item: Any) -> str:
         
     Returns:
         A pipe-delimited comparison key string
-        e.g., "SALMON|ATLANTIC|FIL|SKON|BNLS|D|6OZ"
+        e.g., "SALMON|ATLANTIC|FIL|SKON|BNLS|D|6OZ|SINGLE"
         
     Example:
-        >>> key = comparison_key("SALMON FIL ATL SKON 6OZ")
+        >>> key = comparison_key("POLLOCK FIL WILD ALASKA PROC CHINA 6OZ")
         >>> print(key)
-        'SALMON|ATLANTIC|FIL|SKON|6OZ'
+        'POLLOCK|ALASKA|FIL|6OZ|TWICE'
     """
     # Parse if string provided
     if isinstance(item, str):
@@ -57,9 +63,9 @@ def comparison_key(item: Any) -> str:
     if item.get('trim'):
         components.append(item['trim'])
     
-    # Size
-    if item.get('size'):
-        components.append(item['size'])
+    # Size bucket (for matching — uses bucket, not exact size)
+    if item.get('size_bucket'):
+        components.append(item['size_bucket'])
     
     # Count (for shrimp/scallops)
     if item.get('count'):
@@ -76,6 +82,10 @@ def comparison_key(item: Any) -> str:
     # Value-added (breaded, stuffed, etc.)
     if item.get('value_added'):
         components.append(item['value_added'])
+    
+    # Freeze cycle (v0.4.0 — SINGLE or TWICE)
+    if item.get('freeze_cycle'):
+        components.append(item['freeze_cycle'])
     
     return '|'.join(components)
 
@@ -103,11 +113,12 @@ def match(item1: Any, item2: Any) -> Dict[str, Any]:
         }
         
     Example:
-        >>> result = match("SALMON FIL ATL 6OZ", "Salmon Fillet Atlantic 6oz")
+        >>> result = match("POLLOCK FIL WILD ALASKA 6OZ",
+        ...                "POLLOCK FIL WILD ALASKA PROC CHINA 6OZ")
         >>> print(result['is_comparable'])
-        True
-        >>> print(result['confidence'])
-        0.95
+        False
+        >>> print(result['recommendation'])
+        'NOT COMPARABLE - Different freeze cycle (single vs twice-frozen)'
     """
     # Parse if needed
     if isinstance(item1, str):
@@ -119,8 +130,12 @@ def match(item1: Any, item2: Any) -> Dict[str, Any]:
     key1 = comparison_key(item1)
     key2 = comparison_key(item2)
     
-    # Compare attributes
-    COMPARE_ATTRS = ['category', 'subspecies', 'form', 'skin', 'bone', 'trim', 'size', 'count', 'harvest', 'cut_style', 'meat_grade', 'preparation', 'value_added']
+    # Compare attributes (size_bucket used instead of raw size for matching)
+    COMPARE_ATTRS = [
+        'category', 'subspecies', 'form', 'skin', 'bone', 'trim',
+        'size_bucket', 'count', 'harvest', 'cut_style', 'meat_grade',
+        'preparation', 'value_added', 'freeze_cycle',
+    ]
     
     matching = []
     different = []
@@ -141,27 +156,29 @@ def match(item1: Any, item2: Any) -> Dict[str, Any]:
     
     # Calculate scores
     total_attrs = len(matching) + len(different)
-    match_score = len(matching) / total_attrs if total_attrs > 0 else 0
+    match_score_val = len(matching) / total_attrs if total_attrs > 0 else 0
     
     # Confidence score (penalize missing attributes less than differences)
     confidence = calculate_confidence(matching, different, missing)
     
     # Determine if comparable
-    # Must match on species/category at minimum
-    is_comparable = (
+    # HARD BLOCKS: category mismatch, subspecies mismatch, form mismatch,
+    #              freeze_cycle mismatch (v0.4.0)
+    is_comp = (
         'category' in matching and
         'subspecies' not in different and
         'form' not in different and
-        match_score >= 0.5
+        'freeze_cycle' not in different and  # v0.4.0: HARD BLOCK
+        match_score_val >= 0.5
     )
     
     # Generate recommendation
-    recommendation = _generate_recommendation(matching, different, missing, is_comparable, confidence)
+    recommendation = _generate_recommendation(matching, different, missing, is_comp, confidence)
     
     return {
-        'is_comparable': is_comparable,
+        'is_comparable': is_comp,
         'confidence': round(confidence, 2),
-        'match_score': round(match_score, 2),
+        'match_score': round(match_score_val, 2),
         'matching_attributes': matching,
         'different_attributes': different,
         'missing_attributes': missing,
@@ -184,10 +201,9 @@ def is_comparable(item1: Any, item2: Any, threshold: float = 0.7) -> bool:
         True if items are comparable, False otherwise
         
     Example:
-        >>> is_comparable("SALMON FIL ATL 6OZ", "SALMON FIL ATL 6OZ")
-        True
-        >>> is_comparable("SALMON FIL", "COD FIL")
-        False
+        >>> is_comparable("POLLOCK FIL ALASKA 6OZ",
+        ...               "POLLOCK FIL ALASKA PROC CHINA 6OZ")
+        False  # Single vs twice-frozen
     """
     result = match(item1, item2)
     return result['is_comparable'] and result['confidence'] >= threshold
@@ -221,12 +237,6 @@ def find_matches(target: Any, candidates: List[Any], threshold: float = 0.7, top
     Returns:
         List of match results, sorted by confidence descending
         Each result includes the candidate index and full match details
-        
-    Example:
-        >>> candidates = ["SALMON FIL ATL 6OZ", "SALMON FIL ATL 8OZ", "COD FIL 6OZ"]
-        >>> matches = find_matches("SALMON FILLET ATLANTIC 6 OZ", candidates)
-        >>> print(matches[0]['confidence'])
-        0.95
     """
     results = []
     
@@ -253,23 +263,24 @@ def calculate_confidence(matching: List[str], different: List[str], missing: Lis
     - Different attributes: strong negative
     - Missing attributes: slight negative (data quality issue, not necessarily mismatch)
     
-    Critical attributes (category, form) weighted higher.
+    Critical attributes (category, form, freeze_cycle) weighted higher.
     """
     # Attribute weights
     WEIGHTS = {
-        'category': 3.0,      # Must match
-        'subspecies': 2.0,    # Important for pricing
-        'form': 2.5,          # Critical - fillet vs portion matters a lot
-        'skin': 1.5,          # Important for salmon
-        'bone': 1.0,          # Moderate importance
-        'trim': 1.5,          # Important for salmon fillets
-        'size': 2.0,          # Important for portions
-        'count': 2.0,         # Important for shrimp/scallops
-        'harvest': 1.5,       # Wild vs farm matters
-        'cut_style': 1.5,     # Center cut vs block matters
-        'meat_grade': 2.5,    # Critical for crab - jumbo lump vs claw is huge
-        'preparation': 2.0,   # Raw vs cooked is a major price differentiator
-        'value_added': 2.0,   # Breaded vs plain is a different product entirely
+        'category': 3.0,       # Must match
+        'subspecies': 2.0,     # Important for pricing
+        'form': 2.5,           # Critical - fillet vs portion matters a lot
+        'skin': 1.5,           # Important for salmon
+        'bone': 1.0,           # Moderate importance
+        'trim': 1.5,           # Important for salmon fillets
+        'size_bucket': 2.0,    # Important for portions
+        'count': 2.0,          # Important for shrimp/scallops
+        'harvest': 1.5,        # Wild vs farm matters
+        'cut_style': 1.5,      # Center cut vs block matters
+        'meat_grade': 2.5,     # Critical for crab - jumbo lump vs claw is huge
+        'preparation': 2.0,    # Raw vs cooked is a major price differentiator
+        'value_added': 2.0,    # Breaded vs plain is a different product entirely
+        'freeze_cycle': 3.0,   # v0.4.0: CRITICAL - single vs twice = different product
     }
     
     score = 0
@@ -311,6 +322,8 @@ def _generate_recommendation(matching: List[str], different: List[str], missing:
             return "NOT COMPARABLE - Different species"
         elif 'form' in different:
             return "NOT COMPARABLE - Different form (e.g., fillet vs portion)"
+        elif 'freeze_cycle' in different:
+            return "NOT COMPARABLE - Different freeze cycle (single vs twice-frozen)"
         else:
             return "NOT COMPARABLE - Too many attribute differences"
     
