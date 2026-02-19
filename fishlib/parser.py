@@ -407,9 +407,9 @@ def _infer_freeze_cycle(category: Optional[str], origin_harvest: Optional[str],
 
 _P3_WHITELIST = {
     # Unique species names — no ambiguity
-    'SABLEFISH', 'BUTTERFISH',                          # Black cod
-    'LINGCOD',                                          # Lingcod
-    'VANNAMEI', 'WHITELEG',                             # White shrimp
+    'SABLEFISH', 'BUTTERFISH', 'SABLE',                  # Black cod
+    'LINGCOD', 'LING',                                  # Lingcod
+    'VANNAMEI', 'WHITELEG', 'PRAWN',                    # White shrimp
     'STRIPER',                                          # Striped bass
     'SURIMI', 'KRAB',                                   # Imitation crab
     'DORADO',                                           # Mahi
@@ -418,14 +418,14 @@ _P3_WHITELIST = {
     'FLUKE',                                            # Flounder
     'PICKEREL', 'WALLEYE',                              # Walleye pike
     'JACKFISH',                                         # Northern pike
-    'BRANZINO', 'BRONZINO', 'BRANZINI', 'SPIGOLA',     # Branzino
+    'BRANZINO', 'BRONZINO', 'BRANZINI', 'BRONZINI', 'SPIGOLA',  # Branzino
     'CALAMARI', 'SQUID', 'LOLIGO', 'ILLEX',            # Calamari
     'OCTOPUS', 'PULPO', 'TAKO',                         # Octopus
     'CRAWFISH', 'CRAYFISH', 'CRAWDAD', 'MUDBUG',       # Crawfish
     'WAHOO', 'ONO',                                     # Wahoo
     'MONKFISH', 'GOOSEFISH', 'ANGLERFISH',              # Monkfish
     'MAHIMAHI',                                         # Mahi
-    'SWORDFISH', 'BROADBILL',                           # Swordfish
+    'SWORDFISH', 'BROADBILL', 'SWORD',                  # Swordfish
     'BARRAMUNDI',                                       # Barramundi
     'HADDOCK',                                          # Haddock
     'FLOUNDER',                                         # Flounder
@@ -440,10 +440,51 @@ _P3_WHITELIST = {
     'BEELINER',                                         # Vermilion snapper
     'QUAHOG',                                           # Chowder clam
     'MERO', 'TOOTHFISH',                                # Chilean sea bass
+    'COCKLE', 'COCKLES',                                # Cockle
+    'TAMBAQUI',                                         # Tambaqui
+    'PARROTFISH',                                       # Parrot fish
+    'HAMACHI', 'KAMPACHI', 'KANPACHI',                  # Amberjack
+    'CAPENSIS',                                         # Cape hake
+    'KINGFISH',                                         # King mackerel
+    'TAUTOG', 'BLACKFISH',                              # Blackfish
+    'BLUEFISH',                                         # Bluefish
+    'BLUEGILL', 'CRAPPIE',                              # Freshwater panfish
+    'CORVINA',                                          # Corvina
+    'UNAGI', 'ANAGO',                                   # Eel
+    'ESCARGOT',                                         # Escargot
+    'ESCOLAR',                                          # Escolar
+    'BARRACUDA',                                        # Barracuda
+    'HOGFISH',                                          # Hogfish
+    'LANGOSTINO',                                       # Langostino
+    'MILKFISH',                                         # Milkfish
+    'MULLET',                                           # Mullet
+    'POMPANO',                                          # Pompano
+    'PORGY', 'PORGIES', 'SCUP',                         # Porgy
+    'REDFISH',                                          # Redfish
+    'SANDDAB',                                          # Sanddab
+    'SARDINE',                                          # Sardine
+    'STURGEON',                                         # Sturgeon
+    'TURBOT',                                           # Turbot
+    'ZANDER',                                           # Zander
+    'CROAKER',                                          # Croaker
+    'SMELT',                                            # Smelt
+    'ALLIGATOR',                                        # Alligator
+    'SKATE',                                            # Skate
+    'TILEFISH',                                         # Tilefish
+    'TRIPLETAIL',                                       # Tripletail
+    'COBIA',                                            # Cobia
+    'ANCHOVY',                                          # Anchovy
+    'HERRING',                                          # Herring
+    'WHITEFISH',                                        # Lake whitefish
+    'WHITING',                                          # Whiting
+    'HAKE',                                             # Hake
+    'UNI',                                              # Sea urchin
+    'OPAH',                                             # Opah
+    'CUSK',                                             # Cusk
     # Multi-word unique names (always safe)
     'WALLEYE PIKE', 'PIKE WALLEYE',
-    'CHILEAN SEA BASS', 'BLACK SEA BASS',
-    'STRIPED BASS', 'BASS STRIPED', 'HYBRID BASS',
+    'CHILEAN SEA BASS', 'BLACK SEA BASS', 'WHITE SEA BASS',
+    'STRIPED BASS', 'BASS STRIPED', 'HYBRID BASS', 'BASS STRP', 'BASS WHITE',
     'MAHI MAHI', 'LOUP DE MER', 'EURO BASS',
     'SOFT SHELL', 'CRAB STICK',
     'KING CRAB', 'SNOW CRAB', 'STONE CRAB', 'BLUE CRAB',
@@ -467,6 +508,13 @@ _P3_WHITELIST = {
     'ATLANTIC JONAH', 'FLORIDA STONE',
     'NOVA SCOTIA', 'PRINCE EDWARD ISLAND',
     'CHERRY STONE', 'LITTLE NECK', 'TOP NECK', 'PACIFIC RAZOR',
+    'PARROT FISH', 'CAPE CAPENSIS', 'CAPE HAKE',
+    'KING MACKEREL', 'ORANGE ROUGHY',
+    'ARCTIC CHAR', 'JOHN DORY', 'SEA BREAM', 'SEA URCHIN',
+    'CHAR ARCTIC', 'CHAR',
+    'BREAM SEA', 'BREAM', 'DORADE', 'DORADA', 'MADAI',
+    'RED DRUM', 'BLACK DRUM',
+    'FROG LEG', 'FROG LEGS',
 }
 
 
@@ -505,7 +553,16 @@ def _extract_species(text: str) -> Optional[Dict[str, Any]]:
     for category, cat_data in SPECIES_DATA.items():
         # Handle underscored category names: sea_bass → "SEA BASS"
         cat_name = category.upper().replace('_', ' ')
-        if cat_name not in text_upper:
+        # Also check concatenated form: sea_bass → "SEABASS"
+        cat_name_concat = category.upper().replace('_', '')
+        # Also check reversed word order: sea_bass → "BASS SEA"
+        cat_words = cat_name.split()
+        cat_name_reversed = ' '.join(reversed(cat_words)) if len(cat_words) > 1 else None
+        
+        cat_found = (cat_name in text_upper or 
+                     cat_name_concat in text_upper or
+                     (cat_name_reversed and cat_name_reversed in text_upper))
+        if not cat_found:
             continue
         
         found_subspecies = False

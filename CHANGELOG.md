@@ -1,23 +1,35 @@
 # Changelog
 All notable changes to fishlib will be documented in this file.
 
-## [0.4.4] - 2026-02-19
-### Fixed
-- **Walleye misclassification**: Walleye (a freshwater lake fish) was incorrectly an alias for Alaska Pollock — now correctly classified as pike/walleye (59 Sysco items fixed)
-- **Priority 3 false matches**: Generic words like CHILEAN, DOMESTIC, RED, BLUE, ATLANTIC, etc. could match species without the category name in text (e.g., "ABALONE CHILEAN" → Chilean Sea Bass). Now uses a **whitelist** — only specific, unambiguous aliases (SABLEFISH, VANNAMEI, STRIPER, etc.) can match without the category name present
-- **Pollock aliases**: Removed ALASKA/ALASKAN from pollock subspecies aliases (too generic, caused false matches)
+## [0.5.0] - 2026-02-19
+### Added
+- **85 species categories, 162 total species/subspecies** (up from 46 categories in v0.4.5)
+- **New categories**: Cockle, Tambaqui, Parrot Fish
+- **New subspecies**: Hake/Cape (Cape Capensis), Mackerel/King (Kingfish), Sea Bass/White (California White Sea Bass)
+- **SEABASS one-word matching**: "SEABASS FIL CHILEAN" now correctly matches sea_bass (concatenated category names supported)
+- **PRAWN**: Added as shrimp alias
+- **P3 whitelist expanded**: 100+ safe aliases including SWORD, SABLE, LING, CHAR, BREAM, COCKLE, TAMBAQUI, PARROTFISH, CAPENSIS, KINGFISH, and all new species
+- **Reversed word orders**: CHAR ARCTIC → Arctic Char, BREAM SEA → Sea Bream, BASS STRP → Striped Bass, BASS WHITE → White Sea Bass
+
+### Fixed (carried from v0.4.5)
+- **Walleye misclassification**: Walleye is a freshwater lake fish, not pollock — now correctly classified as pike/walleye (59 Sysco items fixed)
+- **Priority 3 false matches**: Generic words (CHILEAN, DOMESTIC, RED, BLUE, ATLANTIC, etc.) can no longer false-match without category name in text. Uses whitelist — only specific, unambiguous aliases match in Priority 3
+- **Pollock aliases**: Removed ALASKA/ALASKAN from pollock (too generic), added SAITHE to Atlantic Pollock
 - **Cod aliases**: Moved TRUE COD to Pacific Cod, removed GRAY COD
 - **Calamari/Octopus**: Category corrected from "Mollusk" to "Cephalopod"
-
-### Added
 - **Ocean Trout**: New subspecies under trout (separated from steelhead)
-- **Pike restructured**: Walleye Pike and Northern Pike as proper subspecies with full alias sets
+- **Pike restructured**: Walleye Pike and Northern Pike as proper subspecies
 - **Branzino aliases**: BRANZINI, EURO BASS added
-- **Atlantic Pollock**: SAITHE alias added
-- **P3 whitelist system**: Explicit whitelist of ~100 aliases safe for Priority 3 matching; all others require category name in text
-
-### Changed
 - **Trout**: Removed salmon trim levels (A-E don't apply to trout), added DRSD form
+
+## [0.4.5] - 2026-02-19
+### Fixed
+- Walleye = Pike (not Pollock), P3 whitelist system, ocean trout, branzini/euro bass, cephalopod fix
+- See v0.5.0 for full details (v0.4.5 changes rolled into v0.5.0)
+
+## [0.4.4] - 2026-02-18
+### Fixed
+- Internal release — walleye fix in progress
 
 ## [0.4.3] - 2026-02-18
 ### Fixed
